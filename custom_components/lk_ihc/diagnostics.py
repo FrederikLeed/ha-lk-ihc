@@ -9,6 +9,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
 from . import IHCConfigEntry
+from .catalog import is_known
 
 # The address and the login say where the house is and how to get in; the product names and
 # positions say what the rooms are called. None of it helps with a bug report.
@@ -37,6 +38,9 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: IHCConf
             "products": len(data.project.products),
             "resources": len(data.project.resources),
             "roles": data.project.counts(),
-            "product_models": sorted({product.model for product in data.project.products}),
+            # The identifiers, not the readable model names: an unrecognised product takes its name
+            # from the project file, which is text the owner wrote about their own house.
+            "product_ids": sorted({product.model_id for product in data.project.products if product.model_id}),
+            "unrecognised_products": sum(1 for product in data.project.products if not is_known(product.identifier)),
         },
     }

@@ -72,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         identifiers={(DOMAIN, connection.serial_number)},
         manufacturer="LK",
         name=entry.title,
-        model=f"IHC controller {connection.info.get('brand', '')}".strip(),
+        model="IHC controller",
         sw_version=connection.info.get("version"),
         hw_version=connection.info.get("hw_revision"),
         configuration_url=entry.data[CONF_URL],

@@ -31,7 +31,8 @@ async def test_setup_creates_devices_and_entities(hass: HomeAssistant, setup_ent
     lamp = devices.async_get_device_by_identifier((DOMAIN, f"{SERIAL}-8193"), setup_entry.entry_id)  # 0x2001
     assert lamp is not None
     assert lamp.name == "Lamp outlet (in the ceiling)"
-    assert lamp.model == "0x2202"
+    assert lamp.model == "Dataline lamp outlet"
+    assert lamp.model_id == "0x2202"
     assert lamp.via_device_id == controller.id
 
     entities = er.async_get(hass)

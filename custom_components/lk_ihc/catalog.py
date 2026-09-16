@@ -126,6 +126,25 @@ _FALLBACK_BY_TAG: dict[str, RoleSpec] = {
 _INPUT_TAGS = ("dataline_input", "airlink_input", "rf_input", "rs485_input")
 
 
+# What each kind of resource should look like in a list. Lights, binary sensors and sensors are left
+# alone on purpose: Home Assistant picks those from the device class and changes them with the state,
+# which is better than a fixed picture. The ones below have no good default.
+_ICONS: dict[ResourceRole, str] = {
+    ResourceRole.BUTTON: "mdi:gesture-tap-button",
+    ResourceRole.SWITCH: "mdi:electric-switch",
+}
+
+# Products that switch a socket rather than something wired in.
+_OUTLET_PRODUCTS = frozenset({"_0x2201", "_0x4201", "_0x4204"})
+
+
+def icon_for(identifier: str, role: ResourceRole) -> str | None:
+    """Return the icon for a resource, or None to let Home Assistant choose."""
+    if role is ResourceRole.SWITCH and identifier in _OUTLET_PRODUCTS:
+        return "mdi:power-socket"
+    return _ICONS.get(role)
+
+
 def model_name(identifier: str, fallback: str) -> str:
     """Return the readable model name for a product identifier."""
     spec = PRODUCTS.get(identifier)

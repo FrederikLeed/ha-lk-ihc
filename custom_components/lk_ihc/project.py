@@ -13,7 +13,7 @@ from typing import Any
 
 from defusedxml import ElementTree
 
-from .catalog import ResourceRole, role_for
+from .catalog import ResourceRole, icon_for, model_name, role_for
 
 # Nodes that hold a value we can read or write. Everything else in a product is structure.
 _INPUT_TAGS = ("dataline_input", "airlink_input", "rf_input", "rs485_input")
@@ -46,6 +46,7 @@ class Resource:
     name: str
     tag: str
     role: ResourceRole
+    icon: str | None = None
     # Position of this resource among the product's resources of the same tag, from 1.
     index: int = 1
     dimmable: bool = False
@@ -69,7 +70,9 @@ class Product:
     note: str
     position: str
     group: str
+    # What the product is, in words, and the identifier the project file uses for it.
     model: str
+    model_id: str
     resources: tuple[Resource, ...] = ()
 
     @property
@@ -146,6 +149,7 @@ def _parse_product(element: Any, group_name: str) -> Product | None:
                 name=_text(node.get("name")),
                 tag=node.tag,
                 role=spec.role,
+                icon=icon_for(identifier, spec.role),
                 index=index,
                 dimmable=spec.dimmable,
                 device_class=spec.device_class,
@@ -162,6 +166,7 @@ def _parse_product(element: Any, group_name: str) -> Product | None:
         note=_text(element.get("note")),
         position=_text(element.get("position")),
         group=group_name,
-        model=identifier.lstrip("_") or element.tag.removeprefix("product_"),
+        model=model_name(identifier, _text(element.get("name")) or element.tag.removeprefix("product_")),
+        model_id=identifier.lstrip("_"),
         resources=tuple(resources),
     )

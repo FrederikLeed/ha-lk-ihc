@@ -134,12 +134,33 @@ You can run both at once, which is the point of the separate domain. To move ove
 Nothing forces step 5. Two integrations talking to one controller is allowed; each holds its own
 session.
 
+## How the devices read
+
+Each device is named and described from the project, so the device list says what the thing is
+rather than what number it has:
+
+| | |
+|---|---|
+| Name | The product and where it sits: `Universal relay (on the loft above the hall)` |
+| Model | The product in words: `Dataline wall switch, 2 keys` |
+| Model id | The identifier the project file uses: `0x2101` |
+| Manufacturer | LK |
+| Area | The IHC group the product is in |
+| Connected through | The controller, so the whole installation hangs off one device |
+
+Entities take their icon from what they are: a key is `mdi:gesture-tap-button`, a relay is
+`mdi:electric-switch`, a plug outlet is `mdi:power-socket`. Lights, binary sensors and the
+temperature sensors are left alone on purpose, because Home Assistant already picks those from the
+device class and changes them with the state.
+
 ## Diagnostics
 
 **Download diagnostics** on the entry gives the controller's firmware, how many products and
-resources were found, and which product models are in the installation. It contains no address, no
-login, no room names, no product positions and no entity ids, so it can be attached to an issue as
-it is.
+resources were found, and which product identifiers are in the installation, plus how many of them
+the catalogue does not recognise. It reports identifiers rather than model names, because a product
+the catalogue does not know takes its name from the project file, which is text the owner wrote about
+their own house. There is no address, no login, no room name, no product position and no entity id in
+it, so it can be attached to an issue as it is.
 
 ## Limits
 

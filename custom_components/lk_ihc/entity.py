@@ -39,6 +39,8 @@ class IHCEntity(Entity):
         serial = connection.serial_number
         self._attr_unique_id = f"{serial}-{resource.ihc_id}"
         self._attr_entity_registry_enabled_default = resource.enabled_default
+        if resource.icon:
+            self._attr_icon = resource.icon
         if primary or not resource.name:
             self._attr_name = None
         else:
@@ -48,6 +50,7 @@ class IHCEntity(Entity):
             name=product.device_name,
             manufacturer="LK",
             model=product.model,
+            model_id=product.model_id or None,
             suggested_area=product.group or None,
             via_device_id=controller_device_id,
         )

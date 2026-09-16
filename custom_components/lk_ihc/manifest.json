@@ -11,5 +11,5 @@
   "issue_tracker": "https://github.com/FrederikLeed/ha-lk-ihc/issues",
   "loggers": ["ihcsdk"],
   "requirements": ["ihcsdk==2.8.12", "defusedxml==0.7.1"],
-  "version": "0.1.2"
+  "version": "0.2.0"
 }

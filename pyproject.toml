@@ -1,6 +1,6 @@
 [project]
 name = "ha-lk-ihc"
-version = "0.1.2"
+version = "0.2.0"
 description = "Home Assistant custom integration for LK IHC controllers, with a config flow, devices and button events"
 license = {text = "MIT"}
 requires-python = ">=3.14"

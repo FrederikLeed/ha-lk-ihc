@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from custom_components.lk_ihc.catalog import ResourceRole, model_name, role_for
+from custom_components.lk_ihc.catalog import ResourceRole, icon_for, model_name, role_for
 from custom_components.lk_ihc.project import parse_project
 
 from .conftest import load_project
@@ -23,7 +23,8 @@ def test_products_and_groups(project):
     lamp = next(p for p in project.products if p.product_id == 0x2001)
     assert lamp.group == "Living room"
     assert lamp.device_name == "Lamp outlet (in the ceiling)"
-    assert lamp.model == "0x2202"
+    assert lamp.model == "Dataline lamp outlet"
+    assert lamp.model_id == "0x2202"
 
 
 def test_roles(project):
@@ -63,7 +64,8 @@ def test_unknown_product_still_usable(project):
     assert by_id[0x300D].role is ResourceRole.BINARY_SENSOR
     assert by_id[0x300D].enabled_default is False
     unknown = next(p for p in project.products if p.identifier == "_0x9999")
-    assert unknown.model == "0x9999"
+    assert unknown.model == "Something unknown"  # the product's own name, when the catalogue has none
+    assert unknown.model_id == "0x9999"
 
 
 def test_counts(project):
@@ -82,6 +84,16 @@ def test_catalog_helpers():
     assert model_name("_0x2101", "fallback") == "Dataline wall switch, 2 keys"
     assert model_name("_0x9999", "fallback") == "fallback"
     assert role_for("_0x9999", "airlink_dimming", 1).dimmable is True
+
+
+def test_icons(project):
+    """Keys and relays get an icon; lights and sensors keep the one their device class gives them."""
+    by_id = {resource.ihc_id: resource for _product, resource in project.resources}
+    assert by_id[0x3005].icon == "mdi:gesture-tap-button"  # a key
+    assert by_id[0x3007].icon == "mdi:electric-switch"  # a relay
+    assert by_id[0x3001].icon is None  # a light
+    assert by_id[0x3008].icon is None  # a PIR
+    assert icon_for("_0x4201", ResourceRole.SWITCH) == "mdi:power-socket"  # a plug outlet
 
 
 def test_project_without_products():
