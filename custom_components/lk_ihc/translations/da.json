@@ -50,6 +50,9 @@
   "exceptions": {
     "read_only": {
       "message": "Denne IHC-controller er sat op som skrivebeskyttet. Slå skrivebeskyttelsen fra i integrationens indstillinger for at styre anlægget fra Home Assistant."
+    },
+    "unknown_resource": {
+      "message": "Ressource {resource} findes ikke i dette IHC-anlæg."
     }
   }
 }

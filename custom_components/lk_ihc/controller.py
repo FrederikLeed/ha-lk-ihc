@@ -19,10 +19,10 @@ from collections.abc import Callable
 from typing import Any
 
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from ihcsdk.ihccontroller import IHCController
 
-from .const import COMMAND_TIMEOUT, CONNECT_TIMEOUT, HTTP_TIMEOUT
+from .const import COMMAND_TIMEOUT, CONNECT_TIMEOUT, DOMAIN, HTTP_TIMEOUT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,8 +37,12 @@ class IHCConnectError(HomeAssistantError):
     """The controller could not be reached, or did not answer in time."""
 
 
-class IHCReadOnlyError(HomeAssistantError):
-    """A command was attempted while the entry is in read-only mode."""
+class IHCReadOnlyError(ServiceValidationError):
+    """A command was attempted while the entry is in read-only mode.
+
+    A validation error rather than a plain failure: nothing is broken, the integration is set up
+    that way, and Home Assistant then shows the reason instead of a server error with a traceback.
+    """
 
 
 def apply_http_timeout(controller: IHCController, timeout: float = HTTP_TIMEOUT) -> bool:
@@ -181,12 +185,13 @@ class IHCConnection:
     async def _async_command(self, method: Callable[..., bool], ihc_id: int, value: Any) -> None:
         """Send one command, after the two safety checks."""
         if self.read_only:
-            raise IHCReadOnlyError(
-                "This IHC controller is set up read-only. Turn off read-only mode in the "
-                "integration options to control the installation from Home Assistant."
-            )
+            raise IHCReadOnlyError(translation_domain=DOMAIN, translation_key="read_only")
         if ihc_id not in self._known_ids:
-            raise HomeAssistantError(f"Resource {ihc_id} is not part of this IHC installation")
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="unknown_resource",
+                translation_placeholders={"resource": str(ihc_id)},
+            )
         try:
             async with asyncio.timeout(COMMAND_TIMEOUT):
                 sent = await self.hass.async_add_executor_job(method, ihc_id, value)

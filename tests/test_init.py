@@ -6,7 +6,7 @@ import pytest
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, CONF_PASSWORD, SERVICE_TURN_ON, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -124,7 +124,7 @@ async def test_options_change_reloads(hass: HomeAssistant, setup_entry: MockConf
 async def test_command_to_an_unknown_resource_is_refused(hass: HomeAssistant, setup_entry: MockConfigEntry):
     """A resource that is not part of this installation is never written to."""
     connection = setup_entry.runtime_data.connection
-    with pytest.raises(HomeAssistantError, match="not part of this IHC installation"):
+    with pytest.raises(ServiceValidationError, match="not part of this IHC installation"):
         await connection.async_set_bool(999999, True)
 
 

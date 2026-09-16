@@ -50,6 +50,9 @@
   "exceptions": {
     "read_only": {
       "message": "This IHC controller is set up read-only. Turn off read-only mode in the integration options to control the installation from Home Assistant."
+    },
+    "unknown_resource": {
+      "message": "Resource {resource} is not part of this IHC installation."
     }
   }
 }
