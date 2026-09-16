@@ -1,11 +1,18 @@
 # LK IHC for Home Assistant
 
+<img src="custom_components/lk_ihc/brand/icon.svg" alt="LK IHC" width="110" align="right">
+
 A Home Assistant integration for LK IHC controllers that is set up from the user interface, gives
 every product its own device, and exposes the thing the built-in integration leaves out: **the keys
 on the wall switches**.
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/overview-dark.svg">
+  <img alt="The controller is signed in from the user interface and sends its project; groups become areas, products become devices and resources become entities; Home Assistant gets lights, switches, binary sensors, sensors, and an event entity for every key on every wall switch. Read-only until you say otherwise." src="docs/img/overview-light.svg">
+</picture>
 
 ## Why
 
@@ -145,6 +152,21 @@ it is.
   known value until the controller reports a new one.
 - The project is read at setup. If you change the installation in the IHC software, reload the entry
   to pick it up.
+
+## The graphics
+
+The icon, the wordmark and the diagram above are generated from
+[`tools/build_brand.py`](tools/build_brand.py), so a change to any of them is a diff rather than a
+binary someone has to open in an editor:
+
+```bash
+.venv/bin/pip install cairosvg
+.venv/bin/python tools/build_brand.py           # writes brand/ and docs/img/
+.venv/bin/python tools/build_brand.py --check   # fails when they are out of date
+```
+
+Home Assistant serves `custom_components/lk_ihc/brand/icon.png` and its larger sizes directly, so
+the integration shows its own mark without waiting for the brands repository.
 
 ## Development
 
