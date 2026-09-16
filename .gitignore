@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.coverage
+.pytest_cache/
+
+# Never commit a real installation: the project file is a map of someone's house
+*.xml
+!tests/fixtures/*.xml
+project*.json
+ihc_project*
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Agent workspace notes
+.claude/

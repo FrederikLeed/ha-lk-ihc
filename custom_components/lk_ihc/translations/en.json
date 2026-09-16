@@ -1,0 +1,55 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the IHC controller",
+        "description": "Enter the address of the controller and a user that may sign in to it. The integration reads the project from the controller and creates a device for every product it finds.\n\nA new controller starts in read-only mode: everything is shown, nothing is switched. Turn that off in the options when you are ready.",
+        "data": {
+          "url": "Address",
+          "username": "Username",
+          "password": "Password"
+        },
+        "data_description": {
+          "url": "For example http://192.168.1.3. Use https:// if the controller is set up for it.",
+          "username": "An IHC user. A user with read access is enough to look, and control needs a user that may operate the installation."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in to the IHC controller again",
+        "description": "The controller at {url} no longer accepts the saved login.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the controller at that address.",
+      "invalid_auth": "The controller refused that username and password."
+    },
+    "abort": {
+      "already_configured": "This controller is already set up.",
+      "reauth_successful": "Signed in again."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "IHC options",
+        "data": {
+          "read_only": "Read-only",
+          "expose_buttons": "Wall switch keys as events"
+        },
+        "data_description": {
+          "read_only": "While this is on, the integration never sends a command to the installation. Entities still show what the house is doing, and any attempt to switch something says so.",
+          "expose_buttons": "Create an event entity for every key on every wall switch, so automations can trigger on a press. The keys keep doing what the installation already uses them for."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "This IHC controller is set up read-only. Turn off read-only mode in the integration options to control the installation from Home Assistant."
+    }
+  }
+}

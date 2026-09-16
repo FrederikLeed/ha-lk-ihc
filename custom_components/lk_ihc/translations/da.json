@@ -1,0 +1,55 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Forbind til IHC-controlleren",
+        "description": "Indtast controllerens adresse og en bruger, der må logge på. Integrationen henter projektet fra controlleren og opretter en enhed for hvert produkt, den finder.\n\nEn ny controller starter i skrivebeskyttet tilstand: alt bliver vist, intet bliver tændt eller slukket. Slå det fra i indstillingerne, når du er klar.",
+        "data": {
+          "url": "Adresse",
+          "username": "Brugernavn",
+          "password": "Adgangskode"
+        },
+        "data_description": {
+          "url": "For eksempel http://192.168.1.3. Brug https:// hvis controlleren er sat op til det.",
+          "username": "En IHC-bruger. En bruger med læseadgang er nok til at se med, og styring kræver en bruger, der må betjene anlægget."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Log på IHC-controlleren igen",
+        "description": "Controlleren på {url} accepterer ikke længere det gemte login.",
+        "data": {
+          "username": "Brugernavn",
+          "password": "Adgangskode"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kunne ikke få forbindelse til controlleren på den adresse.",
+      "invalid_auth": "Controlleren afviste brugernavn og adgangskode."
+    },
+    "abort": {
+      "already_configured": "Denne controller er allerede sat op.",
+      "reauth_successful": "Logget på igen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "IHC-indstillinger",
+        "data": {
+          "read_only": "Skrivebeskyttet",
+          "expose_buttons": "Tryk på vægkontakter som hændelser"
+        },
+        "data_description": {
+          "read_only": "Så længe den er slået til, sender integrationen aldrig en kommando til anlægget. Enhederne viser stadig, hvad huset gør, og forsøg på at tænde eller slukke får en besked om hvorfor.",
+          "expose_buttons": "Opret en hændelsesenhed for hvert tryk på hver vægkontakt, så automatiseringer kan reagere på et tryk. Trykkene gør stadig det, anlægget allerede bruger dem til."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "Denne IHC-controller er sat op som skrivebeskyttet. Slå skrivebeskyttelsen fra i integrationens indstillinger for at styre anlægget fra Home Assistant."
+    }
+  }
+}

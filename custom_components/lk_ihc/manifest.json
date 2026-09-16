@@ -1,0 +1,15 @@
+{
+  "domain": "lk_ihc",
+  "name": "LK IHC",
+  "codeowners": [
+    "@FrederikLeed"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/FrederikLeed/ha-lk-ihc",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/FrederikLeed/ha-lk-ihc/issues",
+  "loggers": ["ihcsdk"],
+  "requirements": ["ihcsdk==2.8.12", "defusedxml==0.7.1"],
+  "version": "0.1.0"
+}

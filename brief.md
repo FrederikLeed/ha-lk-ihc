@@ -1,0 +1,53 @@
+---
+project: ha-lk-ihc
+repo: https://github.com/FrederikLeed/ha-lk-ihc
+updated: 2026-09-16
+status: active
+---
+
+# LK IHC for Home Assistant
+
+Custom integration (domain `lk_ihc`) for LK IHC controllers: config flow instead of YAML, one device
+per product, and an event entity for every key on every wall switch. Built because Home Assistant's
+built-in `ihc` integration is legacy quality scale, has no code owner, creates no devices, and maps
+only outputs and sensors, so the wall switches, which are the most useful trigger an IHC house has,
+are invisible.
+
+## Current state
+
+- v0.1.0, first working version. 46 tests, 97% coverage, ruff and hassfest clean locally.
+- Platforms: light (on/off and dimmable), switch, binary sensor (PIR, magnet, smoke, leak, twilight),
+  sensor (temperature), event (wall switch keys, fires `press`).
+- Dry run against a real 38 product installation: 38 devices, 63 entities (38 buttons, 10 lights,
+  12 switches, 3 binary sensors), every product recognised, 11 areas suggested from the IHC groups.
+
+## Key decisions
+
+- **Separate domain, not a replacement.** `lk_ihc` runs beside the built-in `ihc` integration, so a
+  live house keeps working while the new one is compared against it. A custom component with the
+  domain `ihc` would have shadowed the built-in one silently, which is the opposite of safe.
+- **Read-only by default.** A new entry never sends a command until the option is turned off. Writes
+  are also refused for any resource that is not in the controller's own project.
+- **HTTP timeouts are set by us.** ihcsdk posts with no timeout, and an executor job cannot be
+  cancelled once it runs, so `apply_http_timeout` wraps the sdk session's `post`. Without it a
+  controller that stops answering mid request would hold a Home Assistant worker thread.
+- **The catalogue is data, not code.** `catalog.py` maps product identifier to role; unknown products
+  still get switches for outputs and disabled binary sensors for inputs, so nothing is silently lost.
+- **The project file never enters the repo.** It is a map of someone's house. `.gitignore` blocks
+  `*.xml` outside `tests/fixtures/`, and the tests use an invented installation.
+
+## Gotchas found while building
+
+- `DeviceInfo(via_device=...)` is deprecated in 2026.9: pass `via_device_id` with the controller
+  device's registry id, which means creating that device before the platforms are forwarded.
+- `device_registry.async_get_device(identifiers=...)` is deprecated too;
+  `async_get_device_by_identifier(identifier, config_entry_id)` is the replacement.
+- Entity ids come out as `<area>_<device>_<entity>` because the device carries `suggested_area`.
+- The first value a subscription delivers is the current one, so an event entity has to ignore it or
+  a key that happens to be held at startup looks like a press.
+
+## Next
+
+- Deploy to prod alongside the built-in integration, verify, then decide about moving over.
+- Long press and double press as separate event types.
+- Function block resources (scenes, timers) if there is a use for them.

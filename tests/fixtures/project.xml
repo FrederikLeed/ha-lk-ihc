@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<utcs project_major_revision="2" project_minor_revision="0">
+  <groups>
+    <group id="_0x1001" name="Living room" position="1">
+      <product_dataline id="_0x2001" product_identifier="_0x2202" name="Lamp outlet" note="" position="in the ceiling">
+        <dataline_output id="_0x3001" name="Light" address_dataline="_0x11"/>
+      </product_dataline>
+      <product_airlink id="_0x2002" product_identifier="_0x4406" name="Combi dimmer 4 keys" note="" position="by the door">
+        <airlink_dimming id="_0x3002" name="Dimmer"/>
+        <airlink_input id="_0x3003" name="Key (top left)"/>
+        <airlink_input id="_0x3004" name="Key (top right)"/>
+      </product_airlink>
+      <product_dataline id="_0x2003" product_identifier="_0x2101" name="Wall switch 2 keys" note="Two keys" position="by the terrace door">
+        <dataline_input id="_0x3005" name="Key (left)" address_dataline="_0x18"/>
+        <dataline_input id="_0x3006" name="Key (right)" address_dataline="_0x19"/>
+      </product_dataline>
+    </group>
+    <group id="_0x1002" name="Utility room" position="2">
+      <product_airlink id="_0x2004" product_identifier="_0x4203" name="Universal relay" note="" position="on the wall">
+        <airlink_relay id="_0x3007" name="Relay"/>
+      </product_airlink>
+      <product_dataline id="_0x2005" product_identifier="_0x210e" name="PIR" note="PIR with two inputs" position="outside">
+        <dataline_input id="_0x3008" name="Movement" address_dataline="_0x21"/>
+        <dataline_input id="_0x3009" name="Second contact" address_dataline="_0x22"/>
+        <dataline_input id="_0x300a" name="Sensitivity" setting="yes"/>
+      </product_dataline>
+      <product_dataline id="_0x2006" product_identifier="_0x2124" name="Temperature sensor" note="" position="by the window">
+        <resource_temperature id="_0x300b" name="Temperature"/>
+      </product_dataline>
+      <product_dataline id="_0x2007" product_identifier="_0x9999" name="Something unknown" note="" position="in the cabinet">
+        <dataline_output id="_0x300c" name="Output"/>
+        <dataline_input id="_0x300d" name="Input"/>
+      </product_dataline>
+    </group>
+  </groups>
+</utcs>
