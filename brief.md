@@ -1,7 +1,7 @@
 ---
 project: ha-lk-ihc
 repo: https://github.com/FrederikLeed/ha-lk-ihc
-updated: 2026-09-16
+updated: 2026-09-21
 status: active
 ---
 
@@ -15,6 +15,13 @@ are invisible.
 
 ## Current state
 
+- v0.2.1: continuous integration, so the repository can be submitted to the HACS default list.
+  `.github/workflows/` runs the HACS Action and hassfest on push, on pull requests and weekly, which
+  HACS requires before it accepts a repository as a default. `requirements_test.txt` gained the
+  integration's own manifest requirements (`ihcsdk`, `defusedxml`): Home Assistant installs those at
+  runtime, but pytest imports the package directly, so a fresh clone could not collect the tests at
+  all. Nothing about the integration's behaviour changed; the version moved only because HACS wants a
+  release created after the actions pass, and this repository has one known installation.
 - v0.2.0: devices read as products, not part numbers. `model` is the catalogue name
   ("Dataline wall switch, 2 keys"), `model_id` is the IHC identifier, and entities carry an icon
   where Home Assistant has no good default (keys, relays, plug outlets). Diagnostics report
@@ -56,6 +63,7 @@ are invisible.
 
 ## Next
 
+- Submit to the HACS default list once the actions are green (`hacs/default`, the `integration` file).
 - Deploy to prod alongside the built-in integration, verify, then decide about moving over.
 - Long press and double press as separate event types.
 - Function block resources (scenes, timers) if there is a use for them.

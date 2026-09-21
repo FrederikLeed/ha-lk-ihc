@@ -1,2 +1,8 @@
 pytest-homeassistant-custom-component==0.13.365
 pytest-cov==7.1.0
+
+# The integration's own manifest requirements. Home Assistant installs these at
+# runtime, but pytest imports custom_components.lk_ihc directly, so a fresh
+# clone (and CI) needs them explicitly or collection fails at import.
+ihcsdk==2.8.12
+defusedxml==0.7.1
