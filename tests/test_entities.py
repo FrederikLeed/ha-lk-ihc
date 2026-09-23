@@ -15,10 +15,13 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
-from .conftest import controller_of
+from custom_components.lk_ihc.const import DOMAIN
+
+from .conftest import SERIAL, controller_of
 
 pytestmark = pytest.mark.usefixtures("auto_enable_custom_integrations")
 
@@ -35,6 +38,7 @@ RELAY_ID = 0x3007
 PIR_ID = 0x3008
 TEMPERATURE_ID = 0x300B
 KEY_LEFT_ID = 0x3005
+LIGHT_MODE_ID = 0xE101
 
 
 async def test_light_follows_the_controller(hass: HomeAssistant, setup_entry: MockConfigEntry):
@@ -108,6 +112,22 @@ async def test_sensor(hass: HomeAssistant, setup_entry: MockConfigEntry):
     assert state.state == "21.5"
     assert state.attributes["device_class"] == "temperature"
     assert state.attributes["unit_of_measurement"] == "°C"
+
+
+async def test_enum_name_with_a_trailing_space(hass: HomeAssistant, config_entry: MockConfigEntry, fake_controller):
+    """A controller can send an enum's name with a trailing space; it still reads as that option."""
+    # Enabled up front, so the test holds whether or not enums are enabled by default.
+    entity_id = (
+        er.async_get(hass)
+        .async_get_or_create(Platform.SENSOR, DOMAIN, f"{SERIAL}-logic-{LIGHT_MODE_ID}", config_entry=config_entry)
+        .entity_id
+    )
+    assert await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+    controller = controller_of(config_entry)
+    controller.notify(LIGHT_MODE_ID, "Manual ")
+    await hass.async_block_till_done()
+    assert hass.states.get(entity_id).state == "Manual"
 
 
 async def test_button_press_fires_an_event(hass: HomeAssistant, setup_entry: MockConfigEntry):

@@ -76,4 +76,7 @@ class IHCEnumSensor(IHCLogicEntity, SensorEntity):
     @callback
     def _apply_value(self, value: Any) -> None:
         """Store the enum's current name; ihcsdk reports it as the option string."""
-        self._attr_native_value = value if isinstance(value, str) and value else None
+        # Stripped like the options are when the project is read, or a name with a trailing space
+        # is not among them and the state cannot be written.
+        name = value.strip() if isinstance(value, str) else ""
+        self._attr_native_value = name or None
