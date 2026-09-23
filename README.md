@@ -262,6 +262,12 @@ binary someone has to open in an editor:
 Home Assistant serves `custom_components/lk_ihc/brand/icon.png` and its larger sizes directly, so
 the integration shows its own mark without waiting for the brands repository.
 
+## Design history
+
+How this integration reached its current shape, and the two investigations (a firmware
+teardown, an API evaluation) that shaped what it does and does not do:
+[docs/how-we-got-here.md](docs/how-we-got-here.md).
+
 ## Development
 
 ```bash
