@@ -23,6 +23,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from ihcsdk.ihccontroller import IHCController
 
 from .const import COMMAND_TIMEOUT, CONNECT_TIMEOUT, DOMAIN, HTTP_TIMEOUT
+from .services import ControllerStatus, ControllerStatusReader
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -113,6 +114,18 @@ class IHCConnection:
         if not project:
             raise IHCConnectError("The IHC controller did not return a project")
         return project
+
+    async def async_status(self) -> ControllerStatus:
+        """Read what the controller says about itself, in an executor.
+
+        Never fatal: a controller that will not answer these is still perfectly usable, and an
+        installation should not fail to set up because it cannot report its own signal strength.
+        """
+        try:
+            return await self.hass.async_add_executor_job(ControllerStatusReader(self._controller.client).read)
+        except Exception:  # noqa: BLE001 - status is a nicety, the installation is not
+            _LOGGER.debug("Could not read the controller's own status", exc_info=True)
+            return ControllerStatus()
 
     async def async_close(self) -> None:
         """Stop notifications and log out."""

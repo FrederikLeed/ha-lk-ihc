@@ -15,6 +15,15 @@ are invisible.
 
 ## Current state
 
+- v0.4.0: what we do not control, we can still read. `services.py` wraps the SOAP services ihcsdk
+  leaves alone - AirlinkManagementService, TimeManagerService, and the configuration reads - and
+  diagnostics now carry the wireless devices (count, low battery, unheard, signal strengths), the
+  project revision, the controller's clock and how it is kept, its ports and whether mail is set up.
+  All of it read-only by intent: these are the controller's own settings and changing them belongs
+  in IHC Administrator. Nothing here is fatal - an older controller answers only some of these, and
+  a missing answer leaves a field as None rather than failing setup. Verified against the live
+  controller: 27 wireless devices, none low, none unheard. `getBatteryLevel` and the SD card calls
+  return nothing on hw 6.1; the battery flag comes from the device list instead.
 - v0.3.0: the installation's own logic is read, so an entity can say what else moves it. The
   project file holds function blocks (a wall switch toggling a relay, a PIR lighting a lamp) and
   the links that wire them to products; the links are followed once at setup and each product is

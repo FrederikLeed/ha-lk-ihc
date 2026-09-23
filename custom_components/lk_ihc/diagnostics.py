@@ -47,4 +47,30 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: IHCConf
             # is either driven by nothing or by something the link graph does not reach.
             "products_with_wiring": sum(1 for product in data.project.products if product.controlled_by),
         },
+        # What the controller says about itself. None of it is controlled from here, but an
+        # installation you cannot see the state of is one you can only guess about.
+        "status": _status(data),
+    }
+
+
+def _status(data: Any) -> dict[str, Any]:
+    """Return the controller's own state, or why there is none."""
+    status = getattr(data, "status", None)
+    if status is None:
+        return {}
+    return {
+        "rf_devices": len(status.rf_devices),
+        "rf_devices_low_battery": status.rf_devices_low_battery,
+        "rf_devices_unheard": status.rf_devices_unheard,
+        # Signal strength per device, without the serial numbers, which identify someone's hardware.
+        "rf_signal_strength": sorted(device.signal_strength for device in status.rf_devices),
+        "project_major_revision": status.project_major_revision,
+        "project_minor_revision": status.project_minor_revision,
+        "controller_time": status.controller_time,
+        "time_synchronised": status.time_synchronised,
+        "gmt_offset_hours": status.gmt_offset_hours,
+        "uses_dst": status.uses_dst,
+        "http_port": status.http_port,
+        "https_port": status.https_port,
+        "smtp_configured": bool(status.smtp_host),
     }

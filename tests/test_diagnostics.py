@@ -37,3 +37,16 @@ async def test_diagnostics(hass: HomeAssistant, setup_entry: MockConfigEntry):
     # Including the name of a product the catalogue does not know, which comes from the owner.
     for private in ("Living room", "by the terrace door", "Lamp outlet", "Something unknown"):
         assert private not in text
+
+
+async def test_diagnostics_report_the_controllers_own_state(hass: HomeAssistant, setup_entry: MockConfigEntry) -> None:
+    """What we do not control is still reported, so an installation can be looked at."""
+    diagnostics = await async_get_config_entry_diagnostics(hass, setup_entry)
+    status = diagnostics["status"]
+    assert status["rf_devices"] == 0
+    assert status["rf_devices_low_battery"] == 0
+    assert status["rf_devices_unheard"] == 0
+    # A controller that answers none of these still reports, rather than omitting the section.
+    assert "controller_time" in status
+    assert "time_synchronised" in status
+    assert status["smtp_configured"] is False
