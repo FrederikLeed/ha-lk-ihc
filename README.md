@@ -33,6 +33,79 @@ This integration:
 - uses a **separate domain** (`lk_ihc`), so it can run next to the built-in `ihc` integration while
   you compare them, and nothing that already works has to be turned off first.
 
+## What this does that the built-in `ihc` does not
+
+Both talk to the same controller over the same SOAP API. The difference is how much of the
+installation they let you see.
+
+| | built-in `ihc` | `lk_ihc` |
+|---|---|---|
+| Set up | `configuration.yaml` only | Settings → Devices & services |
+| Devices | none | one per product, 38 in the house below |
+| Wall switch keys | not exposed | an `event` entity per key |
+| Product names | resource numbers | catalogue names, e.g. "Dataline wall switch, 2 keys" |
+| Areas | assigned by hand | suggested from the IHC groups |
+| Read-only mode | no | yes, and it is the default |
+| What drives an output | not available | `ihc_controlled_by` and `ihc_function_block` |
+| Wireless devices | not available | count, low battery, unheard, signal strength |
+| Controller clock | not available | offset against Home Assistant, and the time server |
+| Controller address | not available | IP, gateway and name servers |
+| Project revision | not available | shown, so a redeployed project is visible |
+| Diagnostics download | no | yes |
+| Code owner | none | yes |
+
+### The integration page
+
+Set up from the user interface, with a version and a device count. The built-in one has no page of
+its own at all.
+
+![The integration page](docs/img/screenshots/integration.png)
+
+### One device per product
+
+Each product in the IHC project becomes a device, named and placed the way the project has it. The
+built-in integration creates none, so everything lands in a flat list of entities with no hardware
+behind them.
+
+![The device list](docs/img/screenshots/devices.png)
+
+### The wall switches
+
+Every key on every switch is an `event` entity. These are the most useful trigger an IHC house has,
+and the built-in integration does not expose them at all, so the switches are invisible to Home
+Assistant even though people press them all day.
+
+![A wall switch as a device](docs/img/screenshots/wall-switch.png)
+
+### What drives an output
+
+The project file holds the controller's own logic - a wall switch toggling a relay, a PIR lighting a
+lamp - and the links that wire it to products. Those links are followed at setup, so a relay that
+changes without Home Assistant asking can say what moved it:
+
+```yaml
+ihc_controlled_by: ["Tryk 2 tast (v. db. dør til terasse)"]
+ihc_function_block: ["Kip blok med tænd, sluk og timer funktion"]
+```
+
+![A relay as a device](docs/img/screenshots/relay-device.png)
+
+### The controller itself
+
+What we do not control, we can still read. Eleven diagnostic sensors on the controller device: the
+wireless devices it hears and how they are doing, its clock measured against Home Assistant's, its
+address, and the project revision. All read-only - changing any of it belongs in IHC Administrator.
+
+The clock is the one worth watching. A controller runs its own time-based logic, so a clock that has
+drifted quietly moves when the house does things. The one below is 3,375 seconds behind, with NTP
+enabled and evidently not working.
+
+![The controller's diagnostics](docs/img/screenshots/controller-diagnostics.png)
+
+### Every entity
+
+![The entity list](docs/img/screenshots/entities.png)
+
 ## Not breaking things
 
 This talks to the system that runs the lights in a real house, so:
