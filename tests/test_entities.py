@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 import pytest
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -13,7 +15,8 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from homeassistant.util import dt as dt_util
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
 from .conftest import controller_of
 
@@ -108,7 +111,7 @@ async def test_sensor(hass: HomeAssistant, setup_entry: MockConfigEntry):
 
 
 async def test_button_press_fires_an_event(hass: HomeAssistant, setup_entry: MockConfigEntry):
-    """A key on a wall switch fires an event when it is pressed, and not when it is released."""
+    """A key on a wall switch fires press when it goes down, and short_release when it comes up."""
     controller = controller_of(setup_entry)
     assert hass.states.get(KEY_LEFT).state == STATE_UNKNOWN
 
@@ -123,10 +126,42 @@ async def test_button_press_fires_an_event(hass: HomeAssistant, setup_entry: Moc
     assert pressed.state != STATE_UNKNOWN
     assert pressed.attributes["event_type"] == "press"
 
-    # Releasing the key does not fire again.
+    assert pressed.attributes["event_types"] == [
+        "press",
+        "single_press",
+        "double_press",
+        "long_press",
+        "short_release",
+        "long_release",
+    ]
+
     controller.notify(KEY_LEFT_ID, False)
     await hass.async_block_till_done()
-    assert hass.states.get(KEY_LEFT).state == pressed.state
+    assert hass.states.get(KEY_LEFT).attributes["event_type"] == "short_release"
+
+
+async def test_button_single_and_long_press(hass: HomeAssistant, setup_entry: MockConfigEntry):
+    """A single press comes once the double press window has passed; a long press while the key is held."""
+    controller = controller_of(setup_entry)
+    controller.notify(KEY_LEFT_ID, False)  # the value the subscription starts with
+    await hass.async_block_till_done()
+
+    controller.notify(KEY_LEFT_ID, True)
+    controller.notify(KEY_LEFT_ID, False)
+    await hass.async_block_till_done()
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=1))
+    await hass.async_block_till_done()
+    assert hass.states.get(KEY_LEFT).attributes["event_type"] == "single_press"
+
+    controller.notify(KEY_LEFT_ID, True)
+    await hass.async_block_till_done()
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=1))
+    await hass.async_block_till_done()
+    assert hass.states.get(KEY_LEFT).attributes["event_type"] == "long_press"
+
+    controller.notify(KEY_LEFT_ID, False)
+    await hass.async_block_till_done()
+    assert hass.states.get(KEY_LEFT).attributes["event_type"] == "long_release"
 
 
 async def test_a_held_key_at_startup_is_not_a_press(hass: HomeAssistant, setup_entry: MockConfigEntry):

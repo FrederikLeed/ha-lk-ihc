@@ -99,6 +99,22 @@
       "dns_servers": {
         "name": "DNS servers"
       }
+    },
+    "event": {
+      "key": {
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "press": "Press",
+              "single_press": "Single press",
+              "double_press": "Double press",
+              "long_press": "Long press",
+              "short_release": "Released after a short press",
+              "long_release": "Released after a long press"
+            }
+          }
+        }
+      }
     }
   },
   "services": {
