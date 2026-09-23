@@ -96,6 +96,47 @@ def test_icons(project):
     assert icon_for("_0x4201", ResourceRole.SWITCH) == "mdi:power-socket"  # a plug outlet
 
 
+RS485_LED_DIMMER = """
+<utcs><groups><group id="_0x1001" name="Dining room">
+  <product_rs485_led_dimmer id="_0x2001" product_identifier="_0x4409" name="IHC LED Dimmer 2 channels"
+                            position="Ceiling spots (dining and reading room)">
+    <resource_flag id="_0x3001" name="Channel synchronisation"/>
+    <rs485_led_dimmer_channel id="_0x2002" product_identifier="_0x4410" name="LED Dimmer channel 1 (Dining room)"
+                              position="">
+      <airlink_dimmer_increase id="_0x3002" name="On / dim up"/>
+      <airlink_dimmer_decrease id="_0x3003" name="Off / dim down"/>
+      <airlink_dimming id="_0x3004" name="Light level"/>
+      <light_indication id="_0x3005" name="Light indication"/>
+      <dimmer_settings id="_0x3006"><dimmer_setting_minimum_value id="_0x3007"/></dimmer_settings>
+    </rs485_led_dimmer_channel>
+    <rs485_led_dimmer_channel id="_0x2003" product_identifier="_0x4410" name="LED Dimmer channel 2 (Reading room)"
+                              position="">
+      <airlink_dimming id="_0x3008" name="Light level"/>
+    </rs485_led_dimmer_channel>
+  </product_rs485_led_dimmer>
+</group></groups></utcs>
+"""
+
+
+def test_rs485_led_dimmer_channels_are_dimmable_lights():
+    """Each channel of an RS485 LED dimmer module is a product with one dimmable light.
+
+    The module is only the box: the channels carry the product identifier (_0x4410), the name and
+    the light level, and each one often lights a room of its own.
+    """
+    project = parse_project(RS485_LED_DIMMER)
+    assert [product.product_id for product in project.products] == [0x2002, 0x2003]
+    channel = project.products[0]
+    assert channel.device_name == "LED Dimmer channel 1 (Dining room)"
+    assert channel.model == "RS485 LED dimmer channel"
+    assert channel.group == "Dining room"
+    assert [resource.ihc_id for resource in channel.resources] == [0x3004]
+    light = channel.resources[0]
+    assert light.role is ResourceRole.LIGHT
+    assert light.dimmable is True
+    assert [resource.ihc_id for resource in project.products[1].resources] == [0x3008]
+
+
 def test_project_without_products():
     """A file with nothing in it parses to an empty project rather than failing."""
     project = parse_project("<utcs><groups><group name='Empty'/></groups></utcs>")
