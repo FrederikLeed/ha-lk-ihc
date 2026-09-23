@@ -1,274 +1,273 @@
-# LK IHC for Home Assistant
+# LK IHC til Home Assistant
 
 <img src="custom_components/lk_ihc/brand/icon.svg" alt="LK IHC" width="110" align="right">
 
-A Home Assistant integration for LK IHC controllers that is set up from the user interface, gives
-every product its own device, and exposes the thing the built-in integration leaves out: **the keys
-on the wall switches**.
+En Home Assistant-integration til LK IHC-controllere, der sættes op fra brugerfladen, giver hvert
+produkt sin egen enhed og viser det, den indbyggede integration udelader: **tasterne på
+vægkontakterne**.
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/img/overview-dark.svg">
-  <img alt="The controller is signed in from the user interface and sends its project; groups become areas, products become devices and resources become entities; Home Assistant gets lights, switches, binary sensors, sensors, and an event entity for every key on every wall switch. Read-only until you say otherwise." src="docs/img/overview-light.svg">
+  <img alt="Controlleren logges på fra brugerfladen og sender sit projekt; grupper bliver til områder, produkter til enheder og ressourcer til entiteter; Home Assistant får lys, kontakter, binære sensorer, sensorer og en hændelses-entitet for hver tast på hver vægkontakt. Skrivebeskyttet indtil du siger andet." src="docs/img/overview-light.svg">
 </picture>
 
-## Why
+## Hvorfor
 
-Home Assistant already ships an `ihc` integration. It works, and this one owes it most of what it
-knows about IHC products. But it is YAML only, it has no code owner, it creates no devices, and it
-maps only outputs and sensors. In a typical house that means the lamp outlets and relays appear, and
-the eleven wall switches people actually press do not.
+Home Assistant har allerede en `ihc`-integration. Den virker, og denne her skylder den det meste af
+det, den ved om IHC-produkter. Men den kan kun sættes op i YAML, den har ingen vedligeholder, den
+opretter ingen enheder, og den mapper kun udgange og sensorer. I et almindeligt hus betyder det, at
+lampeudtag og relæer dukker op — og at de elleve vægkontakter, folk faktisk trykker på, ikke gør.
 
-This integration:
+Denne integration:
 
-- is added from **Settings > Devices & services**, with no YAML at all,
-- reads the project from the controller and makes **one device per product**, named and placed the
-  way the IHC project has it, so entities land in the right areas,
-- creates an **event entity for every key** on every wall switch, so a press can start an automation
-  while the key keeps doing whatever the installation already uses it for,
-- starts **read-only**, so you can look at a whole installation before Home Assistant is allowed to
-  switch anything in it,
-- uses a **separate domain** (`lk_ihc`), so it can run next to the built-in `ihc` integration while
-  you compare them, and nothing that already works has to be turned off first.
+- tilføjes fra **Indstillinger > Enheder og tjenester**, helt uden YAML,
+- læser projektet fra controlleren og laver **én enhed pr. produkt**, navngivet og placeret som
+  IHC-projektet har det, så entiteterne lander i de rigtige områder,
+- opretter en **hændelses-entitet for hver tast** på hver vægkontakt, så et tryk kan starte en
+  automatisering, mens tasten stadig gør det, anlægget i forvejen bruger den til,
+- starter **skrivebeskyttet**, så du kan se hele anlægget igennem, før Home Assistant får lov at
+  tænde eller slukke noget i det,
+- bruger et **separat domæne** (`lk_ihc`), så den kan køre ved siden af den indbyggede
+  `ihc`-integration, mens du sammenligner dem — intet, der virker i dag, skal slukkes først.
 
-## What this does that the built-in `ihc` does not
+## Det denne gør, som den indbyggede `ihc` ikke gør
 
-Both talk to the same controller over the same SOAP API. The difference is how much of the
-installation they let you see.
+Begge taler med den samme controller over det samme SOAP-API. Forskellen er, hvor meget af anlægget
+de lader dig se.
 
-| | built-in `ihc` | `lk_ihc` |
+| | indbygget `ihc` | `lk_ihc` |
 |---|---|---|
-| Set up | `configuration.yaml` only | Settings → Devices & services |
-| Devices | none | one per product, 38 in the house below |
-| Wall switch keys | not exposed | an `event` entity per key |
-| Product names | resource numbers | catalogue names, e.g. "Dataline wall switch, 2 keys" |
-| Areas | assigned by hand | suggested from the IHC groups |
-| Read-only mode | no | yes, and it is the default |
-| What drives an output | not available | `ihc_controlled_by` and `ihc_function_block` |
-| Wireless devices | not available | count, low battery, unheard, signal strength |
-| Controller clock | not available | offset against Home Assistant, and the time server |
-| Controller address | not available | IP, gateway and name servers |
-| Project revision | not available | shown, so a redeployed project is visible |
-| Diagnostics download | no | yes |
-| Code owner | none | yes |
+| Opsætning | kun `configuration.yaml` | Indstillinger → Enheder og tjenester |
+| Enheder | ingen | én pr. produkt, 38 i huset herunder |
+| Taster på vægkontakter | ikke eksponeret | en `event`-entitet pr. tast |
+| Produktnavne | ressourcenumre | katalognavne, fx "Dataline wall switch, 2 keys" |
+| Områder | tildeles manuelt | foreslås ud fra IHC-grupperne |
+| Skrivebeskyttet tilstand | nej | ja, og det er standard |
+| Hvad der styrer en udgang | ikke tilgængeligt | `ihc_controlled_by` og `ihc_function_block` |
+| Trådløse enheder | ikke tilgængeligt | antal, lavt batteri, ikke hørt, signalstyrke |
+| Controllerens ur | ikke tilgængeligt | afvigelse fra Home Assistant, og tidsserveren |
+| Controllerens adresse | ikke tilgængeligt | IP, gateway og navneservere |
+| Projektrevision | ikke tilgængeligt | vises, så et nyt projekt kan ses |
+| Download af diagnostik | nej | ja |
+| Vedligeholder | ingen | ja |
 
-### The integration page
+### Integrationssiden
 
-Set up from the user interface, with a version and a device count. The built-in one has no page of
-its own at all.
+Sat op fra brugerfladen, med version og antal enheder. Den indbyggede har slet ikke sin egen side.
 
-![The integration page](docs/img/screenshots/integration.png)
+![Integrationssiden](docs/img/screenshots/integration.png)
 
-### One device per product
+### Én enhed pr. produkt
 
-Each product in the IHC project becomes a device, named and placed the way the project has it. The
-built-in integration creates none, so everything lands in a flat list of entities with no hardware
-behind them.
+Hvert produkt i IHC-projektet bliver en enhed, navngivet og placeret som projektet har det. Den
+indbyggede integration opretter ingen, så alt lander i én flad liste af entiteter uden hardware bag.
 
-![The device list](docs/img/screenshots/devices.png)
+![Enhedslisten](docs/img/screenshots/devices.png)
 
-### The wall switches
+### Vægkontakterne
 
-Every key on every switch is an `event` entity. These are the most useful trigger an IHC house has,
-and the built-in integration does not expose them at all, so the switches are invisible to Home
-Assistant even though people press them all day.
+Hver tast på hver kontakt er en `event`-entitet. De er den mest brugbare trigger, et IHC-hus har, og
+den indbyggede integration eksponerer dem slet ikke — kontakterne er usynlige for Home Assistant,
+selvom folk trykker på dem hele dagen.
 
-![A wall switch as a device](docs/img/screenshots/wall-switch.png)
+![En vægkontakt som enhed](docs/img/screenshots/wall-switch.png)
 
-### What drives an output
+### Hvad der styrer en udgang
 
-The project file holds the controller's own logic - a wall switch toggling a relay, a PIR lighting a
-lamp - and the links that wire it to products. Those links are followed at setup, so a relay that
-changes without Home Assistant asking can say what moved it:
+Projektfilen rummer controllerens egen logik — en vægkontakt, der kipper et relæ, en PIR, der tænder
+en lampe — og de links, der forbinder den til produkterne. De links følges ved opsætningen, så et
+relæ, der skifter uden at Home Assistant har bedt om det, kan fortælle, hvad der flyttede det:
 
 ```yaml
 ihc_controlled_by: ["Tryk 2 tast (v. db. dør til terasse)"]
 ihc_function_block: ["Kip blok med tænd, sluk og timer funktion"]
 ```
 
-![A relay as a device](docs/img/screenshots/relay-device.png)
+![Et relæ som enhed](docs/img/screenshots/relay-device.png)
 
-### The controller itself
+### Controlleren selv
 
-What we do not control, we can still read. Eleven diagnostic sensors on the controller device: the
-wireless devices it hears and how they are doing, its clock measured against Home Assistant's, its
-address, and the project revision. All read-only - changing any of it belongs in IHC Administrator.
+Det, vi ikke styrer, kan vi stadig læse. Elleve diagnostiksensorer på controller-enheden: de trådløse
+enheder, den hører, og hvordan de har det; dens ur målt mod Home Assistants; dens adresse; og
+projektrevisionen. Alt sammen skrivebeskyttet — at ændre noget af det hører hjemme i IHC Administrator.
 
-The clock is the one worth watching. A controller runs its own time-based logic, so a clock that has
-drifted quietly moves when the house does things. The one below is 3,375 seconds behind, with NTP
-enabled and evidently not working.
+Uret er det, der er værd at holde øje med. En controller kører sin egen tidsstyrede logik, så et ur,
+der stille er drevet, flytter på, hvornår huset gør ting. Det herunder er 3.375 sekunder bagud — med
+NTP slået til og tydeligvis ikke virkende.
 
-![The controller's diagnostics](docs/img/screenshots/controller-diagnostics.png)
+![Controllerens diagnostik](docs/img/screenshots/controller-diagnostics.png)
 
-### Every entity
+### Alle entiteter
 
-![The entity list](docs/img/screenshots/entities.png)
+![Entitetslisten](docs/img/screenshots/entities.png)
 
-## Not breaking things
+## Ikke at ødelægge noget
 
-This talks to the system that runs the lights in a real house, so:
+Det her taler med det system, der styrer lyset i et rigtigt hus, så:
 
-- **Read-only by default.** A new controller is set up read-only. Everything is shown, and any
-  attempt to switch something says why it did not. Turn it off in the options when you are ready.
-- **Nothing is written at startup.** Setting up reads the project and subscribes to values. A
-  command is only ever sent because someone or some automation asked for one.
-- **Commands are bounded.** A command only goes to a resource that came from the controller's own
-  project, and every request to the controller has an HTTP timeout, which the sdk does not set on
-  its own. A controller that stops answering mid request cannot hold a Home Assistant worker thread
-  for ever.
-- **Keys are read, never driven.** Wall switch keys are inputs. The integration subscribes to them
-  and never writes to them, so the installation's own wiring is untouched.
-- **It runs beside the old one.** Different domain, different entity ids, its own config entry. If
-  you do not like it, delete the entry and nothing else changes.
+- **Skrivebeskyttet som standard.** En ny controller sættes op skrivebeskyttet. Alt vises, og et
+  forsøg på at tænde eller slukke noget fortæller, hvorfor det ikke skete. Slå det fra i
+  indstillingerne, når du er klar.
+- **Intet skrives ved opstart.** Opsætningen læser projektet og abonnerer på værdier. En kommando
+  sendes kun, fordi nogen eller en automatisering har bedt om den.
+- **Kommandoer er afgrænsede.** En kommando går kun til en ressource, der kommer fra controllerens
+  eget projekt, og hver forespørgsel til controlleren har en HTTP-timeout, som sdk'et ikke selv
+  sætter. En controller, der holder op med at svare midt i en forespørgsel, kan ikke holde en
+  Home Assistant-arbejdstråd fanget for evigt.
+- **Taster læses, aldrig styres.** Tasterne på vægkontakterne er indgange. Integrationen abonnerer på
+  dem og skriver aldrig til dem, så anlæggets egen kobling rører den ikke.
+- **Den kører ved siden af den gamle.** Andet domæne, andre entitets-id'er, sin egen opsætning. Kan
+  du ikke lide den, sletter du opsætningen, og intet andet ændrer sig.
 
-## Install
+## Installation
 
 ### HACS
 
-1. HACS > three-dot menu > **Custom repositories**.
-2. Add `https://github.com/FrederikLeed/ha-lk-ihc` with the category **Integration**.
-3. Install **LK IHC** and restart Home Assistant.
+1. HACS > menuen med tre prikker > **Brugerdefinerede repositories**.
+2. Tilføj `https://github.com/FrederikLeed/ha-lk-ihc` med kategorien **Integration**.
+3. Installér **LK IHC** og genstart Home Assistant.
 
-### Manual
+### Manuelt
 
-Copy `custom_components/lk_ihc/` into `config/custom_components/` and restart.
+Kopiér `custom_components/lk_ihc/` til `config/custom_components/` og genstart.
 
-Home Assistant 2026.3 or newer.
+Kræver Home Assistant 2026.3 eller nyere.
 
-## Set up
+## Opsætning
 
-**Settings** > **Devices & services** > **Add integration** > **LK IHC**, then give it:
+**Indstillinger** > **Enheder og tjenester** > **Tilføj integration** > **LK IHC**, og udfyld:
 
-| Field | Value |
+| Felt | Værdi |
 |---|---|
-| Address | `http://192.168.1.3`, the controller's address on your network. `https://` works if the controller is set up for it. |
-| Username | An IHC user. Reading is enough to start; controlling needs a user that may operate the installation. |
-| Password | That user's password. |
+| Adresse | `http://192.168.1.3`, controllerens adresse på dit netværk. `https://` virker, hvis controlleren er sat op til det. |
+| Brugernavn | En IHC-bruger. Læseadgang er nok til at starte; styring kræver en bruger, der må betjene anlægget. |
+| Adgangskode | Brugerens adgangskode. |
 
-The integration signs in, reads the project, and creates the devices and entities. The entry is
-read-only until you say otherwise: **Configure** on the entry, then turn **Read-only** off.
+Integrationen logger på, læser projektet og opretter enheder og entiteter. Opsætningen er
+skrivebeskyttet, indtil du siger andet: **Konfigurer** på opsætningen, og slå **Skrivebeskyttet** fra.
 
-## What you get
+## Det du får
 
-| Platform | From | Notes |
+| Platform | Fra | Bemærkninger |
 |---|---|---|
-| Light | Lamp outlets and dimmers | A dimmer gets brightness, an outlet is on or off. |
-| Switch | Relays and plug outlets | |
-| Binary sensor | PIR, magnet contacts, smoke, leak, twilight | With the right device class, so Home Assistant shows them properly. |
-| Sensor | Temperature and other measured values | |
-| Event | Every key on every wall switch | Fires `press`. This is the part the built-in integration does not have. |
+| Lys | Lampeudtag og dæmpere | En dæmper får lysstyrke, et udtag er tændt eller slukket. |
+| Kontakt | Relæer og stikudtag | |
+| Binær sensor | PIR, magnetkontakter, røg, vand, skumring | Med den rigtige enhedsklasse, så Home Assistant viser dem korrekt. |
+| Sensor | Temperatur og andre målte værdier | |
+| Hændelse | Hver tast på hver vægkontakt | Udløser `press`. Det er den del, den indbyggede integration ikke har. |
 
-Products the catalogue does not know still appear: their outputs become switches, and their inputs
-become binary sensors that are created disabled, so nothing is hidden and nothing is in the way.
+Produkter, kataloget ikke kender, vises stadig: deres udgange bliver kontakter, og deres indgange
+bliver binære sensorer, der oprettes deaktiverede — så intet er skjult, og intet er i vejen.
 
-### Using a wall switch key in an automation
+### En tast på en vægkontakt i en automatisering
 
 ```yaml
 automation:
-  - alias: "Double press by the terrace door turns everything off outside"
+  - alias: "Dobbelttryk ved terrassedøren slukker alt udenfor"
     triggers:
       - trigger: state
-        entity_id: event.living_room_wall_switch_2_keys_by_the_terrace_door_key_left
+        entity_id: event.stue_alrum_tryk_2_tast_v_db_dor_til_terasse_tast_venstre
     conditions:
       - condition: template
         value_template: "{{ trigger.to_state.attributes.event_type == 'press' }}"
     actions:
       - action: light.turn_off
         target:
-          area_id: outside
+          area_id: udendors
 ```
 
-An event entity's state is the time of the last press, so a repeated press is a new state and a
-trigger fires every time. The key keeps switching whatever IHC has it wired to.
+En hændelses-entitets tilstand er tidspunktet for det seneste tryk, så et nyt tryk er en ny tilstand,
+og triggeren udløses hver gang. Tasten bliver ved med at styre det, IHC har koblet den til.
 
-## Options
+## Indstillinger
 
-| Option | What it does |
+| Indstilling | Hvad den gør |
 |---|---|
-| Read-only | While on, no command is ever sent to the installation. |
-| Wall switch keys as events | Create the event entities. Turn it off for a smaller entity list. |
+| Skrivebeskyttet | Så længe den er slået til, sendes der aldrig en kommando til anlægget. |
+| Tryk på vægkontakter som hændelser | Opretter hændelses-entiteterne. Slå den fra for en kortere entitetsliste. |
 
-Changing an option reloads the entry, which takes a second or two and needs no restart.
+Ændrer du en indstilling, genindlæses opsætningen. Det tager et sekund eller to og kræver ingen
+genstart.
 
-## Moving over from the built-in `ihc` integration
+## At skifte fra den indbyggede `ihc`-integration
 
-You can run both at once, which is the point of the separate domain. To move over:
+Du kan køre begge samtidig — det er hele pointen med det separate domæne. Sådan skifter du:
 
-1. Install this one, set it up, and leave the YAML integration alone.
-2. Compare: the lights and relays should appear in both, with the same states.
-3. Turn read-only off here and test one light.
-4. Point your automations, scripts and dashboards at the new entity ids. They differ, because the
-   old ones are built from the IHC resource number (`light.stue_alrum_303966`) and the new ones from
-   the product and its position (`light.stue_alrum_lampeudtag_i_loft`).
-5. Remove the `ihc:` block from `configuration.yaml` and restart.
+1. Installér denne, sæt den op, og lad YAML-integrationen være.
+2. Sammenlign: lys og relæer bør vises i begge, med de samme tilstande.
+3. Slå skrivebeskyttelsen fra her, og test ét lys.
+4. Peg dine automatiseringer, scripts og dashboards på de nye entitets-id'er. De er anderledes,
+   fordi de gamle er bygget af IHC-ressourcenummeret (`light.stue_alrum_303966`) og de nye af
+   produktet og dets placering (`light.stue_alrum_lampeudtag_i_loft`).
+5. Fjern `ihc:`-blokken fra `configuration.yaml`, og genstart.
 
-Nothing forces step 5. Two integrations talking to one controller is allowed; each holds its own
+Intet tvinger dig til trin 5. To integrationer må gerne tale med én controller; de har hver sin
 session.
 
-## How the devices read
+## Sådan læses enhederne
 
-Each device is named and described from the project, so the device list says what the thing is
-rather than what number it has:
+Hver enhed navngives og beskrives ud fra projektet, så enhedslisten siger, hvad tingen er, i stedet
+for hvilket nummer den har:
 
 | | |
 |---|---|
-| Name | The product and where it sits: `Universal relay (on the loft above the hall)` |
-| Model | The product in words: `Dataline wall switch, 2 keys` |
-| Model id | The identifier the project file uses: `0x2101` |
-| Manufacturer | LK |
-| Area | The IHC group the product is in |
-| Connected through | The controller, so the whole installation hangs off one device |
+| Navn | Produktet og hvor det sidder: `Universal relæ (på loft over gang)` |
+| Model | Produktet i ord: `Dataline wall switch, 2 keys` |
+| Model-id | Identifikatoren, projektfilen bruger: `0x2101` |
+| Producent | LK |
+| Område | Den IHC-gruppe, produktet ligger i |
+| Forbundet via | Controlleren, så hele anlægget hænger på én enhed |
 
-Entities take their icon from what they are: a key is `mdi:gesture-tap-button`, a relay is
-`mdi:electric-switch`, a plug outlet is `mdi:power-socket`. Lights, binary sensors and the
-temperature sensors are left alone on purpose, because Home Assistant already picks those from the
-device class and changes them with the state.
+Entiteterne får ikon efter, hvad de er: en tast er `mdi:gesture-tap-button`, et relæ er
+`mdi:electric-switch`, et stikudtag er `mdi:power-socket`. Lys, binære sensorer og temperatursensorer
+røres med vilje ikke, fordi Home Assistant selv vælger ikon ud fra enhedsklassen og skifter det med
+tilstanden.
 
-## Diagnostics
+## Diagnostik
 
-**Download diagnostics** on the entry gives the controller's firmware, how many products and
-resources were found, and which product identifiers are in the installation, plus how many of them
-the catalogue does not recognise. It reports identifiers rather than model names, because a product
-the catalogue does not know takes its name from the project file, which is text the owner wrote about
-their own house. There is no address, no login, no room name, no product position and no entity id in
-it, so it can be attached to an issue as it is.
+**Download diagnostik** på opsætningen giver controllerens firmware, hvor mange produkter og
+ressourcer der blev fundet, og hvilke produkt-identifikatorer anlægget indeholder — plus hvor mange
+af dem kataloget ikke genkender. Den rapporterer identifikatorer frem for modelnavne, fordi et
+produkt, kataloget ikke kender, får sit navn fra projektfilen, som er tekst ejeren selv har skrevet
+om sit hus. Der er hverken adresse, login, rumnavne, produktplaceringer eller entitets-id'er i den,
+så den kan vedhæftes en fejlrapport, som den er.
 
-## Limits
+## Begrænsninger
 
-- Tested against an LK IHC controller with firmware 2.7.220 and a project of 38 products. Other
-  firmware should work, because the interface has not changed in years, but it has not been proven
-  here.
-- A key press fires on the leading edge. Hold, double press and release are not distinguished yet.
-- Scenes, timers and other IHC function block resources are not exposed.
-- The controller has no notion of "unavailable" for a single product, so an entity keeps its last
-  known value until the controller reports a new one.
-- The project is read at setup. If you change the installation in the IHC software, reload the entry
-  to pick it up.
+- Testet mod en LK IHC-controller med firmware 2.7.220 og et projekt på 38 produkter. Anden
+  firmware bør virke, fordi grænsefladen ikke har ændret sig i årevis, men det er ikke bevist her.
+- Et tastetryk udløses på den stigende flanke. Hold, dobbelttryk og slip skelnes ikke endnu.
+- Scener, timere og andre funktionsbloks-ressourcer eksponeres ikke.
+- Controlleren har ikke noget begreb om "utilgængelig" for et enkelt produkt, så en entitet beholder
+  sin seneste kendte værdi, indtil controlleren melder en ny.
+- Projektet læses ved opsætningen. Ændrer du anlægget i IHC-softwaren, skal opsætningen
+  genindlæses for at se det.
 
-## The graphics
+## Grafikken
 
-The icon, the wordmark and the diagram above are generated from
-[`tools/build_brand.py`](tools/build_brand.py), so a change to any of them is a diff rather than a
-binary someone has to open in an editor:
+Ikonet, ordmærket og diagrammet ovenfor genereres af
+[`tools/build_brand.py`](tools/build_brand.py), så en ændring i dem er en diff frem for en binær fil,
+nogen skal åbne i et tegneprogram:
 
 ```bash
 .venv/bin/pip install cairosvg
-.venv/bin/python tools/build_brand.py           # writes brand/ and docs/img/
-.venv/bin/python tools/build_brand.py --check   # fails when they are out of date
+.venv/bin/python tools/build_brand.py           # skriver brand/ og docs/img/
+.venv/bin/python tools/build_brand.py --check   # fejler, når de er forældede
 ```
 
-Home Assistant serves `custom_components/lk_ihc/brand/icon.png` and its larger sizes directly, so
-the integration shows its own mark without waiting for the brands repository.
+Home Assistant serverer `custom_components/lk_ihc/brand/icon.png` og de større størrelser direkte,
+så integrationen viser sit eget mærke uden at vente på brands-repositoriet.
 
-## Design history
+## Designhistorie
 
-How this integration reached its current shape, and the two investigations (a firmware
-teardown, an API evaluation) that shaped what it does and does not do:
+Hvordan integrationen er nået til sin nuværende form, og de to undersøgelser (en
+firmware-nedbrydning og en API-vurdering), der har formet, hvad den gør og ikke gør:
 [docs/how-we-got-here.md](docs/how-we-got-here.md).
 
-## Development
+## Udvikling
 
 ```bash
 python3.14 -m venv .venv
@@ -277,13 +276,16 @@ python3.14 -m venv .venv
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
 ```
 
-The tests never touch a network: the sdk controller is replaced by a stand-in, and the project comes
-from an invented file in `tests/fixtures/`.
+Testene rører aldrig et netværk: sdk-controlleren er erstattet af en stand-in, og projektet kommer
+fra en opdigtet fil i `tests/fixtures/`.
 
-## Credit and license
+## Tak og licens
 
-The product identifiers and what they mean come from Home Assistant's own `ihc` integration, which
-is the accumulated work of its contributors. Talking to the controller is done with
-[ihcsdk](https://pypi.org/project/ihcsdk/).
+Denne integration står på skuldrene af **Jesper Nielsen** ([dingusdk](https://github.com/dingusdk)).
+Han har skrevet og vedligeholder [ihcsdk](https://github.com/dingusdk/PythonIhcSdk), som al
+kommunikation med controlleren går igennem, og han er ophavsmand til Home Assistants indbyggede
+`ihc`-integration, som produkt-identifikatorerne og deres betydning kommer fra. Uden hans mangeårige
+arbejde med at åbne IHC — sdk'et, integrationen, ESP8266-klienten, MQTT-gatewayen og
+projekt-vieweren — havde denne integration ikke haft noget at bygge på.
 
-Not affiliated with LK, Schneider Electric or Lauritz Knudsen. MIT licensed.
+Ikke tilknyttet LK, Schneider Electric eller Lauritz Knudsen. MIT-licens.
