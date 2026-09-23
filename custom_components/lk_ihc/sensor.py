@@ -12,6 +12,7 @@ from homeassistant.util.enum import try_parse_enum
 
 from . import IHCConfigEntry
 from .catalog import ResourceRole
+from .controller_sensor import SENSORS, IHCControllerSensor
 from .entity import IHCEntity
 
 _UNITS = {SensorDeviceClass.TEMPERATURE: UnitOfTemperature.CELSIUS}
@@ -20,8 +21,15 @@ _UNITS = {SensorDeviceClass.TEMPERATURE: UnitOfTemperature.CELSIUS}
 async def async_setup_entry(
     hass: HomeAssistant, entry: IHCConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback
 ) -> None:
-    """Add a sensor for every measured value in the installation."""
+    """Add a sensor for every measured value, and the controller's own diagnostics."""
     data = entry.runtime_data
+    async_add_entities(
+        IHCControllerSensor(data.connection.serial_number, data.status, description)
+        for description in SENSORS
+        # A controller that does not implement a service reports nothing for it, and an entity
+        # that would only ever say "unknown" is worse than no entity at all.
+        if description.value(data.status) is not None
+    )
     async_add_entities(
         IHCSensor(
             data.connection,

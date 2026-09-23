@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from xml.etree.ElementTree import fromstring
 
 import pytest
@@ -102,3 +103,29 @@ def test_a_controller_without_these_services_reads_as_empty() -> None:
     assert status.ip_address is None
     # Every service was still asked once, so a controller that gains one is picked up on reload.
     assert ("/ws/AirlinkManagementService", "getDetectedDeviceList") in client.connection.calls
+
+
+def test_clock_offset_undoes_the_controllers_own_timezone() -> None:
+    """The controller writes local time with its offset applied; only the instant matters."""
+    from custom_components.lk_ihc.controller_sensor import _clock_offset
+    from custom_components.lk_ihc.services import ControllerStatus
+
+    now = dt.datetime.now(dt.UTC)
+    # A controller that is exactly right, reporting in GMT+1 with DST, so two hours ahead of UTC.
+    local = (now + dt.timedelta(hours=2)).replace(microsecond=0)
+    status = ControllerStatus(controller_time=local.strftime("%Y-%m-%dT%H:%M:%S"), gmt_offset_hours=1, uses_dst=True)
+    assert abs(_clock_offset(status)) <= 2
+
+    # The same controller, an hour behind.
+    behind = (now + dt.timedelta(hours=1)).replace(microsecond=0)
+    status = ControllerStatus(controller_time=behind.strftime("%Y-%m-%dT%H:%M:%S"), gmt_offset_hours=1, uses_dst=True)
+    assert -3610 <= _clock_offset(status) <= -3590
+
+
+def test_clock_offset_is_none_without_a_clock() -> None:
+    """A controller that does not answer the time manager reports no offset, not a wrong one."""
+    from custom_components.lk_ihc.controller_sensor import _clock_offset
+    from custom_components.lk_ihc.services import ControllerStatus
+
+    assert _clock_offset(ControllerStatus()) is None
+    assert _clock_offset(ControllerStatus(controller_time="2026-09-23T12:00:00")) is None

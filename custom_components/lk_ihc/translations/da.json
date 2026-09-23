@@ -54,5 +54,42 @@
     "unknown_resource": {
       "message": "Ressource {resource} findes ikke i dette IHC-anlæg."
     }
+  },
+  "entity": {
+    "sensor": {
+      "rf_devices": {
+        "name": "Trådløse enheder"
+      },
+      "rf_devices_low_battery": {
+        "name": "Trådløse enheder med lavt batteri"
+      },
+      "rf_devices_unheard": {
+        "name": "Trådløse enheder ikke hørt"
+      },
+      "rf_signal_weakest": {
+        "name": "Svageste trådløse signal"
+      },
+      "rf_signal_strongest": {
+        "name": "Stærkeste trådløse signal"
+      },
+      "clock_offset": {
+        "name": "Urafvigelse"
+      },
+      "time_server": {
+        "name": "Tidsserver"
+      },
+      "project_revision": {
+        "name": "Projektrevision"
+      },
+      "ip_address": {
+        "name": "IP-adresse"
+      },
+      "gateway": {
+        "name": "Gateway"
+      },
+      "dns_servers": {
+        "name": "DNS-servere"
+      }
+    }
   }
 }

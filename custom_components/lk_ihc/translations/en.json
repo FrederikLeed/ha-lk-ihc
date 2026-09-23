@@ -54,5 +54,42 @@
     "unknown_resource": {
       "message": "Resource {resource} is not part of this IHC installation."
     }
+  },
+  "entity": {
+    "sensor": {
+      "rf_devices": {
+        "name": "Wireless devices"
+      },
+      "rf_devices_low_battery": {
+        "name": "Wireless devices low on battery"
+      },
+      "rf_devices_unheard": {
+        "name": "Wireless devices not heard"
+      },
+      "rf_signal_weakest": {
+        "name": "Weakest wireless signal"
+      },
+      "rf_signal_strongest": {
+        "name": "Strongest wireless signal"
+      },
+      "clock_offset": {
+        "name": "Clock offset"
+      },
+      "time_server": {
+        "name": "Time server"
+      },
+      "project_revision": {
+        "name": "Project revision"
+      },
+      "ip_address": {
+        "name": "IP address"
+      },
+      "gateway": {
+        "name": "Gateway"
+      },
+      "dns_servers": {
+        "name": "DNS servers"
+      }
+    }
   }
 }

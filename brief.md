@@ -15,6 +15,17 @@ are invisible.
 
 ## Current state
 
+- v0.5.0: the controller's own state is visible, not just downloadable. v0.4.0 put it in
+  diagnostics, which is a file you fetch and read as JSON - useless for actually watching an
+  installation. It is now eleven diagnostic sensors on the controller device: wireless device
+  count, how many are low on battery or unheard, the weakest and strongest signal, the clock
+  offset, the time server, the project revision, and the address, gateway and name servers. A
+  sensor whose value the controller cannot supply is not created at all, so an older controller
+  gets fewer entities rather than a row of "unknown". The wireless counts return nothing rather
+  than 0 when the controller has no wireless service, because 0 reads as "it heard none" when the
+  truth is it was never able to ask. `clock_offset` undoes the controller's own GMT offset and DST
+  before comparing, so it measures the instant and not how the controller writes it down - on the
+  live controller it reads -3369 s, a clock nearly an hour behind with NTP enabled and not working.
 - v0.4.0: what we do not control, we can still read. `services.py` wraps the SOAP services ihcsdk
   leaves alone - AirlinkManagementService, TimeManagerService, and the configuration reads - and
   diagnostics now carry the wireless devices (count, low battery, unheard, signal strengths), the
