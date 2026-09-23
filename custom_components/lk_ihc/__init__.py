@@ -13,6 +13,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import CONF_READ_ONLY, DEFAULT_READ_ONLY, DOMAIN
 from .controller import IHCAuthError, IHCConnectError, IHCConnection
+from .logic import Logic, parse_logic
 from .project import Project, parse_project
 from .services import ControllerStatus
 
@@ -36,6 +37,8 @@ class IHCData:
     # What the controller says about itself: wireless devices, its clock, its address. Read once at
     # setup, because none of it changes without someone visiting the controller.
     status: ControllerStatus = field(default_factory=ControllerStatus)
+    # Flags and enums from the controller's own logic, shown read-only on the controller device.
+    logic: Logic = field(default_factory=Logic)
     # The registry id of the controller device, so every product device can point at it.
     controller_device_id: str = ""
 
@@ -60,8 +63,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         raise ConfigEntryNotReady(str(err)) from err
 
     project = parse_project(project_xml)
+    logic = parse_logic(project_xml)
     status = await connection.async_status()
-    connection.register([resource.ihc_id for _product, resource in project.resources])
+    connection.register(
+        [resource.ihc_id for _product, resource in project.resources]
+        + [resource.ihc_id for resource in logic.resources]
+    )
     connection.read_only = entry.options.get(CONF_READ_ONLY, DEFAULT_READ_ONLY)
     _LOGGER.debug(
         "IHC controller %s: %s products, %s resources %s, %s wireless devices",
@@ -71,6 +78,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         project.counts(),
         len(status.rf_devices),
     )
+    _LOGGER.debug("IHC logic: %s flags, %s enums", len(logic.flags), len(logic.enums))
 
     device_registry = dr.async_get(hass)
     controller_device = device_registry.async_get_or_create(
@@ -88,6 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         connection=connection,
         project=project,
         status=status,
+        logic=logic,
         controller_device_id=controller_device.id,
     )
 

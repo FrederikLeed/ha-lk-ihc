@@ -15,6 +15,17 @@ are invisible.
 
 ## Current state
 
+- v0.6.0: the controller's own logic resources are visible. Beside a product's physical inputs and
+  outputs, the project holds resources that live only inside the controller's logic: flags it sets
+  and tests, and enums that pick between named states. They were invisible - a flag's state could
+  only be inferred from what the lights did. Enums are now diagnostic sensors on the controller
+  device (device_class enum, options read from the shared `enum_definition` the resource points at
+  by `typedef`); flags are diagnostic binary sensors, disabled by default because an installation
+  has many and most are plumbing. Read-only by intent: a flag or enum is an input to logic the
+  controller runs, ihcsdk has no enum setter, and writing one would reach into that logic blind.
+  Timers and scenes are left out - a timer reads as a near-always-zero countdown and a scene has no
+  readable value. Checked against the firmware: openapi/setValues offers nothing ihcsdk lacks, so
+  the transport stays on ihcsdk (see the firmware notes). Verified live: 2 enums, 15 flags.
 - v0.5.0: the controller's own state is visible, not just downloadable. v0.4.0 put it in
   diagnostics, which is a file you fetch and read as JSON - useless for actually watching an
   installation. It is now eleven diagnostic sensors on the controller device: wireless device

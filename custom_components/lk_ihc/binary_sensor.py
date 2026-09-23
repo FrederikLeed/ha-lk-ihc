@@ -12,6 +12,7 @@ from homeassistant.util.enum import try_parse_enum
 from . import IHCConfigEntry
 from .catalog import ResourceRole
 from .entity import IHCEntity
+from .logicentity import IHCLogicEntity
 
 
 async def async_setup_entry(
@@ -19,6 +20,7 @@ async def async_setup_entry(
 ) -> None:
     """Add a binary sensor for every sensor input in the installation."""
     data = entry.runtime_data
+    async_add_entities(IHCFlagSensor(data.connection, resource) for resource in data.logic.flags)
     async_add_entities(
         IHCBinarySensor(
             data.connection,
@@ -46,3 +48,25 @@ class IHCBinarySensor(IHCEntity, BinarySensorEntity):
     def _apply_value(self, value: Any) -> None:
         """Handle an on/off value, inverted for the products that report the opposite."""
         self._attr_is_on = not bool(value) if self._resource.inverting else bool(value)
+
+
+class IHCFlagSensor(IHCLogicEntity, BinarySensorEntity):
+    """A flag in the controller's logic, read as on or off.
+
+    Disabled by default: an installation has many internal flags, and most are plumbing only. They
+    are here for when a flag turns out to explain something, without cluttering the entity list for
+    everyone who does not need them.
+    """
+
+    _attr_is_on = False
+    _attr_entity_registry_enabled_default = False
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Give the flag an icon; it has no device class."""
+        super().__init__(*args, **kwargs)
+        self._attr_icon = "mdi:flag"
+
+    @callback
+    def _apply_value(self, value: Any) -> None:
+        """Store the flag's on/off state."""
+        self._attr_is_on = bool(value)

@@ -46,6 +46,12 @@
         <airlink_relay id="_0x3010" name="Relay output"/>
         <link_to_resource id="_0x4004" link="_0x4003" name="Follow link"/>
       </product_airlink>
+      <enum_definition id="_0xe001" name="Mode">
+        <enum_value id="_0xe010" name="Auto" index="0"/>
+        <enum_value id="_0xe011" name="Manual" index="1"/>
+      </enum_definition>
+      <resource_flag id="_0xf001" name="Holiday flag" inivalue="off"/>
+      <resource_enum id="_0xe101" name="Light mode" typedef="_0xe001" inivalue="_0xe010"/>
     </group>
   </groups>
 </utcs>

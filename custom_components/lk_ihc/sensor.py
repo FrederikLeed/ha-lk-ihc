@@ -14,6 +14,7 @@ from . import IHCConfigEntry
 from .catalog import ResourceRole
 from .controller_sensor import SENSORS, IHCControllerSensor
 from .entity import IHCEntity
+from .logicentity import IHCLogicEntity
 
 _UNITS = {SensorDeviceClass.TEMPERATURE: UnitOfTemperature.CELSIUS}
 
@@ -30,6 +31,7 @@ async def async_setup_entry(
         # that would only ever say "unknown" is worse than no entity at all.
         if description.value(data.status) is not None
     )
+    async_add_entities(IHCEnumSensor(data.connection, resource) for resource in data.logic.enums)
     async_add_entities(
         IHCSensor(
             data.connection,
@@ -58,3 +60,20 @@ class IHCSensor(IHCEntity, SensorEntity):
     def _apply_value(self, value: Any) -> None:
         """Handle a measured value, ignoring anything that is not a number."""
         self._attr_native_value = value if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+class IHCEnumSensor(IHCLogicEntity, SensorEntity):
+    """An enumeration in the controller's logic, showing its current named state."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Offer the enum's names as options, so the value reads as a known state."""
+        super().__init__(*args, **kwargs)
+        self._attr_icon = "mdi:format-list-bulleted"
+        if self._resource.options:
+            self._attr_options = list(self._resource.options)
+            self._attr_device_class = SensorDeviceClass.ENUM
+
+    @callback
+    def _apply_value(self, value: Any) -> None:
+        """Store the enum's current name; ihcsdk reports it as the option string."""
+        self._attr_native_value = value if isinstance(value, str) and value else None

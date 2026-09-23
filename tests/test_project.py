@@ -125,3 +125,17 @@ def test_wiring_is_empty_when_nothing_links(project: Project) -> None:
     sensor = next(product for product in project.products if product.name == "Temperature sensor")
     assert sensor.controlled_by == ()
     assert sensor.function_blocks == ()
+
+
+def test_logic_reads_flags_and_enums() -> None:
+    """Flags and enums are logic resources, not tied to any product."""
+    from custom_components.lk_ihc.logic import parse_logic
+
+    from .conftest import load_project
+
+    logic = parse_logic(load_project())
+    assert [flag.name for flag in logic.flags] == ["Holiday flag"]
+    enum = next(e for e in logic.enums if e.name == "Light mode")
+    # Options come from the shared definition the enum points at by typedef.
+    assert enum.options == ("Auto", "Manual")
+    assert enum.kind == "enum"
