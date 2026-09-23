@@ -27,7 +27,11 @@ _INPUT_TAGS = ("dataline_input", "airlink_input", "rf_input", "rs485_input")
 _OUTPUT_TAGS = ("dataline_output", "airlink_relay", "airlink_dimming", "rf_output", "rs485_output")
 _VALUE_TAGS = (*_INPUT_TAGS, *_OUTPUT_TAGS, "resource_temperature", "resource_float", "resource_integer")
 
-_PRODUCT_TAGS = ("product_dataline", "product_airlink", "product_rf", "product_rs485")
+# An RS485 LED dimmer is a module (product_rs485_led_dimmer, _0x4409) with a channel per output. The
+# module itself carries no light - each rs485_led_dimmer_channel has its own product identifier
+# (_0x4410), its own name and its own light level, and often lights a room of its own - so the
+# channel is the product here, and the module is only the box it sits in.
+_PRODUCT_TAGS = ("product_dataline", "product_airlink", "product_rf", "product_rs485", "rs485_led_dimmer_channel")
 
 # A link is two halves: the source carries a "link" attribute naming the id of the matching
 # half inside whatever it feeds. Both halves sit inside the product or function block they
