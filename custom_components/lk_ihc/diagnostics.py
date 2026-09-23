@@ -42,5 +42,9 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: IHCConf
             # from the project file, which is text the owner wrote about their own house.
             "product_ids": sorted({product.model_id for product in data.project.products if product.model_id}),
             "unrecognised_products": sum(1 for product in data.project.products if not is_known(product.identifier)),
+            "function_blocks": len(data.project.function_blocks),
+            # How much of the installation's own logic we could trace. A product with no wiring
+            # is either driven by nothing or by something the link graph does not reach.
+            "products_with_wiring": sum(1 for product in data.project.products if product.controlled_by),
         },
     }

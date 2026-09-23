@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from custom_components.lk_ihc.catalog import ResourceRole, icon_for, model_name, role_for
-from custom_components.lk_ihc.project import parse_project
+from custom_components.lk_ihc.project import Project, parse_project
 
 from .conftest import load_project
 
@@ -19,7 +19,7 @@ def project():
 def test_products_and_groups(project):
     """Every product in the file is found, with its group, position and model name."""
     assert [group for group in project.groups] == ["Living room", "Utility room"]
-    assert len(project.products) == 7
+    assert len(project.products) == 9
     lamp = next(p for p in project.products if p.product_id == 0x2001)
     assert lamp.group == "Living room"
     assert lamp.device_name == "Lamp outlet (in the ceiling)"
@@ -72,8 +72,8 @@ def test_counts(project):
     """The summary counts every role, which is what the setup log and diagnostics show."""
     assert parse_project(load_project()).counts() == {
         "light": 2,
-        "button": 4,
-        "switch": 2,
+        "button": 5,
+        "switch": 3,
         "binary_sensor": 3,
         "sensor": 1,
     }
@@ -101,3 +101,27 @@ def test_project_without_products():
     project = parse_project("<utcs><groups><group name='Empty'/></groups></utcs>")
     assert project.products == []
     assert project.counts() == {}
+
+
+def test_function_blocks_are_read(project: Project) -> None:
+    """The controller's own logic is part of the project and worth knowing about."""
+    assert len(project.function_blocks) == 1
+    block = project.function_blocks[0]
+    assert block.name == "1.1.01. Toggle block with on, off and timer"
+    # The catalogue number is how IHC files the block, not how anyone refers to it.
+    assert block.short_name == "Toggle block with on, off and timer"
+
+
+def test_wiring_names_what_drives_a_product(project: Project) -> None:
+    """A relay fed through a function block reports the switch, with the block as the reason."""
+    # The fixture holds two relays; this is the one the link chain reaches.
+    relay = next(product for product in project.products if product.position == "in the attic")
+    assert relay.controlled_by == ("Wall switch 2 keys (by the hall door)",)
+    assert relay.function_blocks == ("Toggle block with on, off and timer",)
+
+
+def test_wiring_is_empty_when_nothing_links(project: Project) -> None:
+    """A product no link reaches says nothing rather than guessing."""
+    sensor = next(product for product in project.products if product.name == "Temperature sensor")
+    assert sensor.controlled_by == ()
+    assert sensor.function_blocks == ()

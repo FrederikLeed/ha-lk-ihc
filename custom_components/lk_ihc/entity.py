@@ -79,4 +79,10 @@ class IHCEntity(Entity):
             attributes["ihc_note"] = self._product.note
         if self._product.position:
             attributes["ihc_position"] = self._product.position
+        # What else can change this entity behind our back. The controller runs its own logic,
+        # so a relay moving without a Home Assistant call is normal, not a fault - this says why.
+        if self._product.controlled_by:
+            attributes["ihc_controlled_by"] = list(self._product.controlled_by)
+        if self._product.function_blocks:
+            attributes["ihc_function_block"] = list(self._product.function_blocks)
         return attributes

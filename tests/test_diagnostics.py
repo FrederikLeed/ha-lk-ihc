@@ -19,11 +19,13 @@ async def test_diagnostics(hass: HomeAssistant, setup_entry: MockConfigEntry):
 
     assert diagnostics["installation"] == {
         "groups": 2,
-        "products": 7,
-        "resources": 12,
-        "roles": {"light": 2, "button": 4, "switch": 2, "binary_sensor": 3, "sensor": 1},
-        "product_ids": ["0x2101", "0x210e", "0x2124", "0x2202", "0x4203", "0x4406", "0x9999"],
+        "products": 9,
+        "resources": 14,
+        "roles": {"light": 2, "button": 5, "switch": 3, "binary_sensor": 3, "sensor": 1},
+        "product_ids": ["0x2101", "0x2102", "0x210e", "0x2124", "0x2202", "0x4101", "0x4203", "0x4406", "0x9999"],
         "unrecognised_products": 1,
+        "function_blocks": 1,
+        "products_with_wiring": 1,
     }
     assert diagnostics["controller"]["version"] == "2.7.220"
     assert diagnostics["controller"]["read_only"] is False

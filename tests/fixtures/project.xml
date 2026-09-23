@@ -31,6 +31,21 @@
         <dataline_output id="_0x300c" name="Output"/>
         <dataline_input id="_0x300d" name="Input"/>
       </product_dataline>
+      <product_dataline id="_0x2008" product_identifier="_0x2102" name="Wall switch 2 keys" note="" position="by the hall door">
+        <dataline_input id="_0x300e" name="Top key"/>
+        <link_from_resource id="_0x4001" link="_0x4002" name="Follow link"/>
+      </product_dataline>
+      <functionblock id="_0x2009" name="1.1.01. Toggle block with on, off and timer">
+        <link_to_resource id="_0x4002" link="_0x4001" name="Follow link"/>
+        <link_from_resource id="_0x4003" link="_0x4004" name="Follow link"/>
+        <settings>
+          <resource_timer id="_0x300f" name="Timer" hour="0" minute="10" second="0"/>
+        </settings>
+      </functionblock>
+      <product_airlink id="_0x200a" product_identifier="_0x4101" name="Universal relay" note="" position="in the attic">
+        <airlink_relay id="_0x3010" name="Relay output"/>
+        <link_to_resource id="_0x4004" link="_0x4003" name="Follow link"/>
+      </product_airlink>
     </group>
   </groups>
 </utcs>

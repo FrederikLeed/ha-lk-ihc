@@ -40,7 +40,7 @@ async def test_setup_creates_devices_and_entities(hass: HomeAssistant, setup_ent
     by_platform: dict[str, int] = {}
     for entry in entries:
         by_platform[entry.domain] = by_platform.get(entry.domain, 0) + 1
-    assert by_platform == {"light": 2, "switch": 2, "binary_sensor": 3, "sensor": 1, "event": 4}
+    assert by_platform == {"light": 2, "switch": 3, "binary_sensor": 3, "sensor": 1, "event": 5}
 
 
 async def test_disabled_entities_are_registered_but_not_created(hass: HomeAssistant, setup_entry: MockConfigEntry):

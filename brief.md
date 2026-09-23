@@ -1,7 +1,7 @@
 ---
 project: ha-lk-ihc
 repo: https://github.com/FrederikLeed/ha-lk-ihc
-updated: 2026-09-21
+updated: 2026-09-23
 status: active
 ---
 
@@ -15,6 +15,15 @@ are invisible.
 
 ## Current state
 
+- v0.3.0: the installation's own logic is read, so an entity can say what else moves it. The
+  project file holds function blocks (a wall switch toggling a relay, a PIR lighting a lamp) and
+  the links that wire them to products; the links are followed once at setup and each product is
+  told which products reach it and through which block. Entities gained `ihc_controlled_by` and
+  `ihc_function_block`, diagnostics gained `function_blocks` and `products_with_wiring`. A link is
+  two halves that name each other, and both sit inside the product or block they belong to, so the
+  wiring is read by asking who owns each half - matching on the `link1` attribute finds nothing,
+  which is what made the logic look unwired at first. Verified against the live 38 product
+  installation: 17 blocks, 22 products with traced wiring.
 - v0.2.1: continuous integration, so the repository can be submitted to the HACS default list.
   `.github/workflows/` runs the HACS Action and hassfest on push, on pull requests and weekly, which
   HACS requires before it accepts a repository as a default. `requirements_test.txt` gained the
