@@ -189,14 +189,22 @@ class IHCConnection:
         """Set a decimal number on a resource."""
         await self._async_command(self._controller.set_runtime_value_float, ihc_id, value)
 
+    async def async_set_timer(self, ihc_id: int, milliseconds: int) -> None:
+        """Set a timer resource, such as a function block's own timer."""
+        await self._async_command(self._controller.set_runtime_value_timer, ihc_id, milliseconds)
+
+    async def async_set_time(self, ihc_id: int, hours: int, minutes: int, seconds: int) -> None:
+        """Set a time-of-day resource."""
+        await self._async_command(self._controller.set_runtime_value_time, ihc_id, hours, minutes, seconds)
+
     async def async_pulse(self, ihc_id: int) -> None:
         """Send a short on and off, the way a wall switch does."""
         await self.async_set_bool(ihc_id, True)
         await asyncio.sleep(0.1)
         await self.async_set_bool(ihc_id, False)
 
-    async def _async_command(self, method: Callable[..., bool], ihc_id: int, value: Any) -> None:
-        """Send one command, after the two safety checks."""
+    async def _async_command(self, method: Callable[..., bool], ihc_id: int, *values: Any) -> None:
+        """Send one command, after the two safety checks. Most take one value; a time takes three."""
         if self.read_only:
             raise IHCReadOnlyError(translation_domain=DOMAIN, translation_key="read_only")
         if ihc_id not in self._known_ids:
@@ -207,7 +215,7 @@ class IHCConnection:
             )
         try:
             async with asyncio.timeout(COMMAND_TIMEOUT):
-                sent = await self.hass.async_add_executor_job(method, ihc_id, value)
+                sent = await self.hass.async_add_executor_job(method, ihc_id, *values)
         except TimeoutError as err:
             raise IHCConnectError(f"The IHC controller did not accept the command for {ihc_id} in time") from err
         if not sent:

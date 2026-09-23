@@ -53,6 +53,15 @@
     },
     "unknown_resource": {
       "message": "Resource {resource} is not part of this IHC installation."
+    },
+    "no_controller": {
+      "message": "No IHC controller is set up."
+    },
+    "which_controller": {
+      "message": "More than one IHC controller is set up. Give the controller's serial number in the controller field."
+    },
+    "unknown_controller": {
+      "message": "No IHC controller with serial number {controller} is set up."
     }
   },
   "entity": {
@@ -89,6 +98,120 @@
       },
       "dns_servers": {
         "name": "DNS servers"
+      }
+    }
+  },
+  "services": {
+    "set_runtime_value_bool": {
+      "name": "Set on/off value",
+      "description": "Set a boolean resource on or off. Works on any resource in the project, not only those with an entity.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        },
+        "value": {
+          "name": "Value",
+          "description": "On (true) or off (false)."
+        }
+      }
+    },
+    "set_runtime_value_int": {
+      "name": "Set integer value",
+      "description": "Set an integer resource.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The integer to set."
+        }
+      }
+    },
+    "set_runtime_value_float": {
+      "name": "Set decimal value",
+      "description": "Set a floating-point resource.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The number to set."
+        }
+      }
+    },
+    "set_runtime_value_timer": {
+      "name": "Set timer",
+      "description": "Set a timer resource, in milliseconds - for example a function block's own timer.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        },
+        "value": {
+          "name": "Milliseconds",
+          "description": "The timer value in milliseconds."
+        }
+      }
+    },
+    "set_runtime_value_time": {
+      "name": "Set time of day",
+      "description": "Set a time-of-day resource.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        },
+        "value_hour": {
+          "name": "Hour",
+          "description": "0-23."
+        },
+        "value_minute": {
+          "name": "Minute",
+          "description": "0-59."
+        },
+        "value_second": {
+          "name": "Second",
+          "description": "0-59."
+        }
+      }
+    },
+    "pulse": {
+      "name": "Pulse",
+      "description": "Send a short on-then-off, the way a wall switch key does. Useful for driving a function block input.",
+      "fields": {
+        "ihc_id": {
+          "name": "Resource id",
+          "description": "The IHC resource number, as shown in the project or in an entity's ihc_id attribute."
+        },
+        "controller": {
+          "name": "Controller",
+          "description": "The controller's serial number. Only needed when more than one controller is set up."
+        }
       }
     }
   }

@@ -10,10 +10,12 @@ from homeassistant.const import CONF_PASSWORD, CONF_URL, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.typing import ConfigType
 
+from .actions import async_register_actions
 from .const import CONF_READ_ONLY, DEFAULT_READ_ONLY, DOMAIN
 from .controller import IHCAuthError, IHCConnectError, IHCConnection
-from .logic import Logic, parse_logic
+from .logic import Logic, parse_logic, parse_resource_ids
 from .project import Project, parse_project
 from .services import ControllerStatus
 
@@ -46,6 +48,12 @@ class IHCData:
 type IHCConfigEntry = ConfigEntry[IHCData]
 
 
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Register the domain's actions. They exist once, and pick their controller per call."""
+    async_register_actions(hass)
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
     """Connect to the controller, read the installation and create the entities."""
     connection = IHCConnection(
@@ -65,10 +73,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
     project = parse_project(project_xml)
     logic = parse_logic(project_xml)
     status = await connection.async_status()
-    connection.register(
-        [resource.ihc_id for _product, resource in project.resources]
-        + [resource.ihc_id for resource in logic.resources]
-    )
+    # Every resource in the project may be the target of a command - not only the ones with an
+    # entity. A timer inside a function block has no entity, but an action may want to set it.
+    # Subscriptions are still made per entity; this only says what a command may be sent to.
+    connection.register(sorted(parse_resource_ids(project_xml)))
     connection.read_only = entry.options.get(CONF_READ_ONLY, DEFAULT_READ_ONLY)
     _LOGGER.debug(
         "IHC controller %s: %s products, %s resources %s, %s wireless devices",

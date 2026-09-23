@@ -192,6 +192,40 @@ og triggeren udløses hver gang. Tasten bliver ved med at styre det, IHC har kob
 Ændrer du en indstilling, genindlæses opsætningen. Det tager et sekund eller to og kræver ingen
 genstart.
 
+## Handlinger: sæt en ressource på dens nummer
+
+Entiteterne dækker det, der er værd at have en entitet: lamper, relæer, sensorer, taster. Men et
+anlæg har ressourcer, ingen entitet repræsenterer — en funktionsbloks timer, et flag dens logik
+tester, en indgang der kun findes for at blive pulset — og en automatisering skal af og til ramme
+præcis sådan én. Det gør du med handlingerne, der adresserer en ressource på dens `ihc_id`:
+
+| Handling | Felter |
+|---|---|
+| `lk_ihc.set_runtime_value_bool` | `ihc_id`, `value` (true/false) |
+| `lk_ihc.set_runtime_value_int` | `ihc_id`, `value` |
+| `lk_ihc.set_runtime_value_float` | `ihc_id`, `value` |
+| `lk_ihc.set_runtime_value_timer` | `ihc_id`, `value` (millisekunder) |
+| `lk_ihc.set_runtime_value_time` | `ihc_id`, `value_hour`, `value_minute`, `value_second` |
+| `lk_ihc.pulse` | `ihc_id` — kort tænd-og-sluk, som et tastetryk |
+
+Navnene og felterne er de samme som den indbyggede `ihc`-integrations services, så en
+automatisering skrevet til `ihc.set_runtime_value_bool` virker her ved at skifte domænet. Med flere
+controllere sat op vælger feltet `controller` én på serienummer; med én kan det udelades.
+
+```yaml
+# Sæt PIR-blokkens timer til 10 minutter
+action: lk_ihc.set_runtime_value_timer
+data:
+  ihc_id: 133392
+  value: 600000
+```
+
+To ting ændrer sig ikke, fordi en ressource rammes på nummer i stedet for via en entitet:
+**skrivebeskyttelsen gælder stadig**, og **projektet afgrænser stadig, hvad der kan skrives til.** En
+handling går kun til et id, der findes i controllerens eget projekt — det sæt er bredere end
+entiteterne (timere og flag er med), men et nummer, der ikke findes i anlægget, afvises. En tastefejl
+kan ikke skrive blindt ind i huset.
+
 ## At skifte fra den indbyggede `ihc`-integration
 
 Du kan køre begge samtidig — det er hele pointen med det separate domæne. Sådan skifter du:

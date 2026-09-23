@@ -94,6 +94,14 @@ class FakeIHCController:
         self.commands.append(("float", resource_id, value))
         return self.command_result
 
+    def set_runtime_value_timer(self, resource_id: int, value: int) -> bool:
+        self.commands.append(("timer", resource_id, value))
+        return self.command_result
+
+    def set_runtime_value_time(self, resource_id: int, hours: int, minutes: int, seconds: int) -> bool:
+        self.commands.append(("time", resource_id, (hours, minutes, seconds)))
+        return self.command_result
+
     # --- what the tests drive it with ---
     def notify(self, resource_id: int, value: Any) -> None:
         """Send a value the way the controller's notify thread would."""

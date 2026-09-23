@@ -22,6 +22,17 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.7.0: handlinger, der sætter en ressource på dens nummer — det, den indbyggede `ihc` havde,
+  og vi manglede. `actions.py` registrerer seks domæne-handlinger med samme navne og felter som de
+  indbyggede services (`set_runtime_value_bool/int/float/timer/time`, `pulse`), så en automatisering
+  skrevet til `ihc.` virker ved at skifte domænet. De to sikkerhedsregler holder: skrivebeskyttelsen
+  afviser en handling præcis som en entitet, og projektet afgrænser stadig målet — men "kendte id'er"
+  er nu *alle* ressourcer i projektfilen (`parse_resource_ids`: produkternes ind/udgange plus alt
+  `resource_*`, altså timere, flag, enums, scener), ikke kun dem med en entitet. Det er hele pointen:
+  en funktionsbloks timer har ingen entitet, men en handling kan sætte den. Abonnementer laves stadig
+  kun pr. entitet; `register()` styrer kun, hvad en kommando må ramme. `_async_command` tager nu
+  `*values`, fordi et klokkeslæt er tre tal. Med flere controllere vælger feltet `controller` på
+  serienummer; med én udelades det. Registreret i `async_setup`, én gang for domænet.
 - v0.6.0: controllerens egne logik-ressourcer er synlige. Ud over et produkts fysiske ind- og udgange
   rummer projektet ressourcer, der kun lever inde i controllerens logik: flag, den sætter og tester,
   og enums, der vælger mellem navngivne tilstande. De var usynlige — et flags tilstand kunne kun

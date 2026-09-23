@@ -42,6 +42,12 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
 - **v0.6.0** — controllerens logik-ressourcer: flag og enums, der kun lever inde i dens logik, som
   skrivebeskyttede diagnostik-entiteter (enums som sensorer, flag som binære sensorer, der er
   deaktiverede som standard).
+- **v0.7.0** — handlinger, der sætter en ressource på dens nummer: `set_runtime_value_bool/int/
+  float/timer/time` og `pulse`, med samme navne og felter som den indbyggede integrations services.
+  Det lukkede det største funktionelle hul i forhold til Jesper Nielsens integration (se
+  sammenligningen nedenfor). Skrivebeskyttelsen og projekt-afgrænsningen holder uændret; "kendte
+  id'er" blev bare udvidet til alle ressourcer i projektet, så en funktionsbloks timer kan sættes,
+  selvom den ingen entitet har.
 
 ## Undersøgelse 1 — firmware-nedbrydningen
 
@@ -99,6 +105,7 @@ at flag og enums er adresserbare ressourcer — og det blev til v0.6.0.
 | Funktionsbloks-koblinger | nej | nej | ja |
 | Diagnostik for trådløst / ur / netværk | nej | nej | ja |
 | Flag og enums | nej | nej | ja |
+| Handlinger på ressource-id (`set_runtime_value_*`, `pulse`) | ja | ja | ja, fra v0.7.0 |
 | Transport | ihcsdk | ihcsdk | ihcsdk |
 
 Forfatterens egen beta bruger samme parsing-tilgang, hvilket er en god bekræftelse af, at fundamentet

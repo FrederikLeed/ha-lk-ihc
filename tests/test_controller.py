@@ -187,3 +187,11 @@ async def test_close_stops_listening(connection):
     await connection.async_close()
     assert FakeIHCController.instances[-1].disconnected is True
     assert connection._listeners == {}
+
+
+async def test_timer_and_time_commands(connection):
+    """A timer takes milliseconds; a time of day takes three values, sent as one command."""
+    connection.register([1, 2])
+    await connection.async_set_timer(1, 1500)
+    await connection.async_set_time(2, 6, 45, 30)
+    assert FakeIHCController.instances[-1].commands == [("timer", 1, 1500), ("time", 2, (6, 45, 30))]

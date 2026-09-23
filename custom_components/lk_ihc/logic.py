@@ -101,3 +101,37 @@ def parse_logic(xml: str | bytes) -> Logic:
                     )
                 )
     return logic
+
+
+# Every tag whose element is a resource the controller can be asked to set. Products carry the
+# first group; the controller's own logic carries the rest (timers, flags, enums, scenes).
+_ADDRESSABLE_TAGS = frozenset(
+    {
+        "dataline_input",
+        "dataline_output",
+        "airlink_input",
+        "airlink_relay",
+        "airlink_dimming",
+        "rf_input",
+        "rf_output",
+        "rs485_input",
+        "rs485_output",
+    }
+)
+
+
+def parse_resource_ids(xml: str | bytes) -> set[int]:
+    """Return the id of every resource in the project that a command could be sent to.
+
+    This is wider than the set that becomes entities: a timer inside a function block has no entity,
+    but an action may still want to set it. It is still bounded by the project - an id that is not
+    in the installation is not in this set, and a command to it is refused.
+    """
+    root = ElementTree.fromstring(xml)
+    ids: set[int] = set()
+    for element in root.iter():
+        if element.tag in _ADDRESSABLE_TAGS or element.tag.startswith("resource_"):
+            ihc_id = _int_id(element.get("id"))
+            if ihc_id is not None:
+                ids.add(ihc_id)
+    return ids

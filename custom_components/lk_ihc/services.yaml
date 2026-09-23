@@ -1,0 +1,120 @@
+set_runtime_value_bool:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    value:
+      required: true
+      selector:
+        boolean:
+    controller:
+      required: false
+      selector:
+        text:
+
+set_runtime_value_int:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    value:
+      required: true
+      selector:
+        number:
+          mode: box
+    controller:
+      required: false
+      selector:
+        text:
+
+set_runtime_value_float:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    value:
+      required: true
+      selector:
+        number:
+          mode: box
+          step: any
+    controller:
+      required: false
+      selector:
+        text:
+
+set_runtime_value_timer:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    value:
+      required: true
+      selector:
+        number:
+          min: 0
+          mode: box
+          unit_of_measurement: ms
+    controller:
+      required: false
+      selector:
+        text:
+
+set_runtime_value_time:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    value_hour:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 23
+          mode: box
+    value_minute:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 59
+          mode: box
+    value_second:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 59
+          mode: box
+    controller:
+      required: false
+      selector:
+        text:
+
+pulse:
+  fields:
+    ihc_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    controller:
+      required: false
+      selector:
+        text:
