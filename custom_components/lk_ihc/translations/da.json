@@ -99,6 +99,22 @@
       "dns_servers": {
         "name": "DNS-servere"
       }
+    },
+    "event": {
+      "key": {
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "press": "Tryk",
+              "single_press": "Enkelt tryk",
+              "double_press": "Dobbelttryk",
+              "long_press": "Langt tryk",
+              "short_release": "Sluppet efter kort tryk",
+              "long_release": "Sluppet efter langt tryk"
+            }
+          }
+        }
+      }
     }
   },
   "services": {

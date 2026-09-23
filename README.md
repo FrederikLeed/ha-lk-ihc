@@ -157,7 +157,7 @@ skrivebeskyttet, indtil du siger andet: **Konfigurer** på opsætningen, og slå
 | Kontakt | Relæer og stikudtag | |
 | Binær sensor | PIR, magnetkontakter, røg, vand, skumring | Med den rigtige enhedsklasse, så Home Assistant viser dem korrekt. |
 | Sensor | Temperatur og andre målte værdier | |
-| Hændelse | Hver tast på hver vægkontakt | Udløser `press`. Det er den del, den indbyggede integration ikke har. |
+| Hændelse | Hver tast på hver vægkontakt | Tryk, enkelt- og dobbelttryk, langt tryk og slip — se nedenfor. Det er den del, den indbyggede integration ikke har. |
 
 Produkter, kataloget ikke kender, vises stadig: deres udgange bliver kontakter, og deres indgange
 bliver binære sensorer, der oprettes deaktiverede — så intet er skjult, og intet er i vejen.
@@ -181,6 +181,22 @@ automation:
 
 En hændelses-entitets tilstand er tidspunktet for det seneste tryk, så et nyt tryk er en ny tilstand,
 og triggeren udløses hver gang. Tasten bliver ved med at styre det, IHC har koblet den til.
+
+Controlleren melder kun, at en tast går ned og kommer op. Resten regner integrationen ud af tiden
+imellem, så en automatisering kan vælge den bevægelse, den vil have, fra listen i brugerfladen:
+
+| Hændelse | Hvornår |
+|---|---|
+| `press` | Hver gang tasten går ned, med det samme. |
+| `single_press` | Et kort tryk, der ikke blev fulgt af et nyt. Kommer 0,3 sekunder efter slip, for først da vides det, at det ikke var starten på et dobbelttryk. |
+| `double_press` | Tasten går ned igen inden for 0,3 sekunder efter et kort tryk. |
+| `long_press` | Tasten har været holdt nede i 0,8 sekunder — mens den stadig holdes. |
+| `short_release` | Tasten slippes, før den blev til et langt tryk. |
+| `long_release` | Tasten slippes efter et langt tryk. |
+
+`press` kommer stadig ved hvert tryk, så en automatisering, der kun vil vide, at der blev trykket,
+venter aldrig. Skal enkelt- og dobbelttryk gøre hver sin ting, så brug `single_press` og
+`double_press` i stedet.
 
 ## Indstillinger
 
@@ -273,7 +289,8 @@ så den kan vedhæftes en fejlrapport, som den er.
 
 - Testet mod en LK IHC-controller med firmware 2.7.220 og et projekt på 38 produkter. Anden
   firmware bør virke, fordi grænsefladen ikke har ændret sig i årevis, men det er ikke bevist her.
-- Et tastetryk udløses på den stigende flanke. Hold, dobbelttryk og slip skelnes ikke endnu.
+- Langt tryk og dobbelttryk regnes ud fra, hvornår controlleren melder tasten ned og op, med faste
+  tider: 0,8 sekunder for et langt tryk og 0,3 sekunder til et dobbelttryk. De kan ikke ændres endnu.
 - Scener, timere og andre funktionsbloks-ressourcer eksponeres ikke.
 - Controlleren har ikke noget begreb om "utilgængelig" for et enkelt produkt, så en entitet beholder
   sin seneste kendte værdi, indtil controlleren melder en ny.
