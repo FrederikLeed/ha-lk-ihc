@@ -1,5 +1,8 @@
 {
   "config": {
+    "initiate_flow": {
+      "user": "Add IHC controller"
+    },
     "step": {
       "user": {
         "title": "Connect to the IHC controller",
