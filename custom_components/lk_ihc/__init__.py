@@ -96,7 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
     controller_device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, connection.serial_number)},
-        manufacturer="LK",
+        manufacturer="Schneider Electric",
         name=entry.title,
         model="IHC controller",
         sw_version=connection.info.get("version"),
