@@ -1,4 +1,4 @@
-"""The base for a logic-resource entity: a flag or enum shown on the controller device.
+"""The base for a logic-resource entity: a flag, enum or block output shown on the controller device.
 
 Unlike a product entity, a logic resource has no product and belongs to no room - it is part of the
 controller's own logic. So it hangs on the controller device, in the diagnostic category, and takes
@@ -15,6 +15,7 @@ from homeassistant.helpers.entity import Entity, EntityCategory
 
 from .const import DOMAIN
 from .controller import IHCConnection
+from .entity import area_for_group
 from .logic import LogicResource
 
 
@@ -31,8 +32,26 @@ class IHCLogicEntity(Entity):
         self._resource = resource
         serial = connection.serial_number
         self._attr_unique_id = f"{serial}-logic-{resource.ihc_id}"
-        self._attr_name = resource.name or f"IHC {resource.kind} {resource.ihc_id}"
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, serial)})
+
+    @property
+    def name(self) -> str:
+        """Name the resource with the room it is in, and with its block when the room is not enough.
+
+        An installation uses the same function block in many rooms, and every copy has the same
+        settings and outputs - four "Dimmer status" in four rooms. The room is the area the group
+        belongs in, which is only known once the entity is added. Where two blocks in one room
+        share a name, the block tells them apart: whoever set it up usually named it after what it
+        drives ("PIR controlled output (front spot)").
+        """
+        resource = self._resource
+        name = resource.name or f"IHC {resource.kind} {resource.ihc_id}"
+        where = []
+        if resource.group:
+            where.append(area_for_group(self.hass, resource.group) if self.hass else resource.group)
+        if resource.name_shared and resource.block:
+            where.append(resource.block)
+        return f"{name} – {', '.join(where)}" if where else name
 
     async def async_added_to_hass(self) -> None:
         """Start listening for this resource's value."""

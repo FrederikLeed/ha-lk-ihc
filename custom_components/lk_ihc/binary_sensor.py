@@ -81,8 +81,6 @@ class IHCBlockOutputSensor(IHCFlagSensor):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Name the output after its block too, since "Output" or "ON pulse" alone says nothing."""
+        """Mark it as something a block puts out."""
         super().__init__(*args, **kwargs)
         self._attr_icon = "mdi:export"
-        if self._resource.block:
-            self._attr_name = f"{self._resource.name or 'Output'} ({self._resource.block})"

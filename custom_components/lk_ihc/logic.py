@@ -21,8 +21,9 @@ tells you anything worth an entity.
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from defusedxml import ElementTree
@@ -53,8 +54,13 @@ class LogicResource:
     group: str = ""
     # For an enum, the names it can take, in project order. Empty for a flag.
     options: tuple[str, ...] = ()
-    # For a block output, the block it belongs to, without its catalogue number.
+    # The function block the resource sits in, without its catalogue number, and the part of the
+    # block: "settings" or "outputs". Both empty for a resource that is not in a block.
     block: str = ""
+    section: str = ""
+    # Another resource in the same group has the same name. An installation uses the same block in
+    # several places, so this is common, and then only the block tells them apart.
+    name_shared: bool = False
 
 
 @dataclass(slots=True)
@@ -71,18 +77,34 @@ class Logic:
         return [*self.flags, *self.enums, *self.outputs]
 
 
-def _outside_programs(element: Any) -> Iterator[Any]:
-    """Every element below this one, leaving out the function blocks' programs.
+def _block_name(block: Any) -> str:
+    """Return a block's name without its catalogue number ("6.2.01.b. "), as FunctionBlock.short_name has it."""
+    if block is None:
+        return ""
+    name = _text(block.get("name"))
+    number, _, rest = name.partition(". ")
+    return (rest or number).strip()
 
-    A program writes the values it tests and sets as resources of their own: "if the mode is Last
-    level" holds a resource_enum with the value Last level. Those are constants in the program,
-    not resources with a state, and IHC Visual names them "Enumerator" or nothing at all.
+
+def _outside_programs(element: Any, block: Any = None, section: str = "") -> Iterator[tuple[Any, Any, str]]:
+    """Every element below this one, with the function block and part of it that it sits in.
+
+    The function blocks' programs are left out. A program writes the values it tests and sets as
+    resources of their own: "if the mode is Last level" holds a resource_enum with the value Last
+    level. Those are constants in the program, not resources with a state, and IHC Visual names
+    them "Enumerator" or nothing at all.
     """
     for child in element:
         if child.tag == "programs":
             continue
-        yield child
-        yield from _outside_programs(child)
+        if child.tag == "functionblock":
+            child_block, child_section = child, ""
+        elif element is block:
+            child_block, child_section = block, child.tag
+        else:
+            child_block, child_section = block, section
+        yield child, child_block, child_section
+        yield from _outside_programs(child, child_block, child_section)
 
 
 def parse_logic(xml: str | bytes) -> Logic:
@@ -105,40 +127,31 @@ def parse_logic(xml: str | bytes) -> Logic:
     logic = Logic()
     for group in root.iter("group"):
         group_name = _text(group.get("name"))
-        for element in _outside_programs(group):
+        for element, block, section in _outside_programs(group):
             ihc_id = _int_id(element.get("id"))
             if ihc_id is None:
                 continue
+            where = {"group": group_name, "block": _block_name(block), "section": section}
             if element.tag == "resource_flag":
-                logic.flags.append(
-                    LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="flag", group=group_name)
-                )
+                logic.flags.append(LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="flag", **where))
             elif element.tag == "resource_enum":
                 logic.enums.append(
                     LogicResource(
                         ihc_id=ihc_id,
                         name=_text(element.get("name")),
                         kind="enum",
-                        group=group_name,
                         options=enum_options.get(element.get("typedef", ""), ()),
+                        **where,
                     )
                 )
-        for block in group.iter("functionblock"):
-            # Without its catalogue number ("6.2.01.b. "), as FunctionBlock.short_name has it.
-            number, _, rest = _text(block.get("name")).partition(". ")
-            block_name = (rest or number).strip()
-            for element in block.findall("outputs/resource_output"):
-                ihc_id = _int_id(element.get("id"))
-                if ihc_id is not None:
-                    logic.outputs.append(
-                        LogicResource(
-                            ihc_id=ihc_id,
-                            name=_text(element.get("name")),
-                            kind="output",
-                            group=group_name,
-                            block=block_name,
-                        )
-                    )
+            elif element.tag == "resource_output" and section == "outputs":
+                logic.outputs.append(
+                    LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="output", **where)
+                )
+
+    counts = Counter((resource.name, resource.group) for resource in logic.resources)
+    for resources in (logic.flags, logic.enums, logic.outputs):
+        resources[:] = [replace(r, name_shared=counts[r.name, r.group] > 1) for r in resources]
     return logic
 
 
