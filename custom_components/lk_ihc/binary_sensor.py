@@ -21,6 +21,7 @@ async def async_setup_entry(
     """Add a binary sensor for every sensor input in the installation."""
     data = entry.runtime_data
     async_add_entities(IHCFlagSensor(data.connection, resource) for resource in data.logic.flags)
+    async_add_entities(IHCBlockOutputSensor(data.connection, resource) for resource in data.logic.outputs)
     async_add_entities(
         IHCBinarySensor(
             data.connection,
@@ -70,3 +71,18 @@ class IHCFlagSensor(IHCLogicEntity, BinarySensorEntity):
     def _apply_value(self, value: Any) -> None:
         """Store the flag's on/off state."""
         self._attr_is_on = bool(value)
+
+
+class IHCBlockOutputSensor(IHCFlagSensor):
+    """An output of a function block in the controller's logic, read as on or off.
+
+    Disabled by default, like the flags: most outputs are pulses that feed a product. The few that
+    say what no product shows - the alarm is armed, a contact loop is open - are worth switching on.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Name the output after its block too, since "Output" or "ON pulse" alone says nothing."""
+        super().__init__(*args, **kwargs)
+        self._attr_icon = "mdi:export"
+        if self._resource.block:
+            self._attr_name = f"{self._resource.name or 'Output'} ({self._resource.block})"

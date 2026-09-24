@@ -5,6 +5,10 @@ only inside the controller's own logic: flags it sets and tests, and enumeration
 named states. They are not wired to anything you can touch, so Home Assistant never showed them,
 and until now the only way to know a flag's state was to infer it from what the lights did.
 
+A function block's outputs belong here too. Many are pulses that feed a product, but some say what
+the controller's logic has concluded and no product shows: whether the alarm is armed, whether a
+contact loop is open, whether a dimmer is on.
+
 These are read-only here on purpose. A flag or an enum is an input to logic the controller runs;
 writing one from Home Assistant would reach into that logic blind, and ihcsdk has no setter for an
 enum in any case. So they are exposed to be seen, not driven, and they live on the controller
@@ -41,27 +45,30 @@ def _text(value: str | None) -> str:
 
 @dataclass(frozen=True, slots=True)
 class LogicResource:
-    """One logic resource: a flag (on/off) or an enum (one of several named states)."""
+    """One logic resource: a flag or a block output (on/off), or an enum (one of several named states)."""
 
     ihc_id: int
     name: str
-    kind: str  # "flag" or "enum"
+    kind: str  # "flag", "enum" or "output"
     group: str = ""
     # For an enum, the names it can take, in project order. Empty for a flag.
     options: tuple[str, ...] = ()
+    # For a block output, the block it belongs to, without its catalogue number.
+    block: str = ""
 
 
 @dataclass(slots=True)
 class Logic:
-    """The installation's flags and enums."""
+    """The installation's flags, enums and function block outputs."""
 
     flags: list[LogicResource] = field(default_factory=list)
     enums: list[LogicResource] = field(default_factory=list)
+    outputs: list[LogicResource] = field(default_factory=list)
 
     @property
     def resources(self) -> list[LogicResource]:
-        """Every logic resource, flags and enums together."""
-        return [*self.flags, *self.enums]
+        """Every logic resource together."""
+        return [*self.flags, *self.enums, *self.outputs]
 
 
 def _outside_programs(element: Any) -> Iterator[Any]:
@@ -79,7 +86,7 @@ def _outside_programs(element: Any) -> Iterator[Any]:
 
 
 def parse_logic(xml: str | bytes) -> Logic:
-    """Read the flags and enums from the project.
+    """Read the flags, enums and function block outputs from the project.
 
     Enum options come from a shared definition the resource points at by `typedef`, so the
     definitions are collected first and then looked up. A resource whose definition is missing
@@ -116,6 +123,22 @@ def parse_logic(xml: str | bytes) -> Logic:
                         options=enum_options.get(element.get("typedef", ""), ()),
                     )
                 )
+        for block in group.iter("functionblock"):
+            # Without its catalogue number ("6.2.01.b. "), as FunctionBlock.short_name has it.
+            number, _, rest = _text(block.get("name")).partition(". ")
+            block_name = (rest or number).strip()
+            for element in block.findall("outputs/resource_output"):
+                ihc_id = _int_id(element.get("id"))
+                if ihc_id is not None:
+                    logic.outputs.append(
+                        LogicResource(
+                            ihc_id=ihc_id,
+                            name=_text(element.get("name")),
+                            kind="output",
+                            group=group_name,
+                            block=block_name,
+                        )
+                    )
     return logic
 
 

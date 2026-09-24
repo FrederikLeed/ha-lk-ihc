@@ -201,3 +201,28 @@ def test_values_written_in_a_program_are_not_logic() -> None:
         </group></groups></utcs>"""
     )
     assert [enum.name for enum in logic.enums] == ["Start level", "Dimmer status"]
+
+
+def test_function_block_outputs_are_logic() -> None:
+    """A block's outputs are read with the block they belong to; a program's are not."""
+    from custom_components.lk_ihc.logic import parse_logic
+
+    logic = parse_logic(
+        """<utcs><groups><group name="Alarm">
+          <functionblock id="_0x100" name="6.2.01.b. Burglar alarm (Full)">
+            <outputs>
+              <resource_output id="_0x101" name="Alarm armed"/>
+              <resource_output id="_0x102" name="Siren"/>
+            </outputs>
+            <programs><program_simple name="Program"><actions>
+              <action><resource_output id="_0x103" name="Output"/></action>
+            </actions></program_simple></programs>
+          </functionblock>
+        </group></groups></utcs>"""
+    )
+    assert [(o.ihc_id, o.name, o.block, o.group) for o in logic.outputs] == [
+        (0x101, "Alarm armed", "Burglar alarm (Full)", "Alarm"),
+        (0x102, "Siren", "Burglar alarm (Full)", "Alarm"),
+    ]
+    assert all(o.kind == "output" for o in logic.outputs)
+    assert {o.ihc_id for o in logic.resources} >= {0x101, 0x102}

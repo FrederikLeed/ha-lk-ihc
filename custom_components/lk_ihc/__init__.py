@@ -40,7 +40,7 @@ class IHCData:
     # What the controller says about itself: wireless devices, its clock, its address. Read once at
     # setup, because none of it changes without someone visiting the controller.
     status: ControllerStatus = field(default_factory=ControllerStatus)
-    # Flags and enums from the controller's own logic, shown read-only on the controller device.
+    # Flags, enums and block outputs from the controller's own logic, shown read-only on the controller.
     logic: Logic = field(default_factory=Logic)
     # The registry id of the controller device, so every product device can point at it.
     controller_device_id: str = ""
@@ -87,7 +87,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         project.counts(),
         len(status.rf_devices),
     )
-    _LOGGER.debug("IHC logic: %s flags, %s enums", len(logic.flags), len(logic.enums))
+    _LOGGER.debug(
+        "IHC logic: %s flags, %s enums, %s block outputs", len(logic.flags), len(logic.enums), len(logic.outputs)
+    )
     _async_remove_stale_logic(hass, entry, connection.serial_number, logic)
 
     device_registry = dr.async_get(hass)
@@ -117,7 +119,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
 
 @callback
 def _async_remove_stale_logic(hass: HomeAssistant, entry: IHCConfigEntry, serial: str, logic: Logic) -> None:
-    """Remove the entities of flags and enums the project no longer has.
+    """Remove the entities of flags, enums and block outputs the project no longer has.
 
     Earlier versions read the values written inside the function blocks' programs as enums too -
     several hundred on a real installation - and a project changes whenever an installer edits it.

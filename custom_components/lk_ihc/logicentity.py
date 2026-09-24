@@ -56,4 +56,6 @@ class IHCLogicEntity(Entity):
         attributes = {"ihc_id": self._resource.ihc_id, "ihc_kind": self._resource.kind}
         if self._resource.group:
             attributes["ihc_group"] = self._resource.group
+        if self._resource.block:
+            attributes["ihc_function_block"] = self._resource.block
         return attributes
