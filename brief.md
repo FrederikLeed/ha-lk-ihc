@@ -154,7 +154,7 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Næste
 
-- Indsend til HACS' standardliste (`hacs/default`, filen `integration`); actions er grønne.
+- HACS standardliste: indsendt 2026-09-24 som [hacs/default#11261](https://github.com/hacs/default/pull/11261). Køen tager måneder; tjek status i [backloggen](https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc). Bliver den sat til draft, er det en småting, der skal rettes, og så sættes den til "ready for review" igen.
 - Tiderne for langt tryk og dobbelttryk som indstillinger (i dag faste 0,8 s / 0,3 s).
 - En pytest-workflow i CI; hedegaard1 har tilbudt sin.
 - `_0x2103`: kataloget siger "Dataline wall switch, 1 key", IHC Viewer siger "Button, 6 keys" — tjek mod kilden.
