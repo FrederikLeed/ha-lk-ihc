@@ -22,6 +22,11 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.8.1: nyt mærke — et DIN-skinne IHC-modul med terminaler og "LK IHC" på labelen, tegnet som
+  vektor i `tools/build_brand.py` efter en raster, ejeren havde lavet. Kun grafik; versionen flyttede
+  efter ejerens eget valg, fordi HA læser `brand/` fra den installerede kode, og et nyt ikon ellers
+  først ville nå brugerne ved næste rigtige udgivelse. Undtagelsen bekræfter reglen i den globale
+  CLAUDE.md: bump aldrig for docs alene uden at ejeren har bedt om det.
 - v0.8.0: de første bidrag udefra — tre pull requests fra hedegaard1, afprøvet på et anlæg med
   67 produkter og firmware 3.3.44 ved siden af den indbyggede integration. (1) Tastebevægelser:
   controlleren melder kun ned og op, så `gestures.py` regner `single_press`, `double_press`,
