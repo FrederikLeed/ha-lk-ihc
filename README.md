@@ -268,7 +268,7 @@ for hvilket nummer den har:
 | Model | Produktet i ord: `Dataline wall switch, 2 keys` |
 | Model-id | Identifikatoren, projektfilen bruger: `0x2101` |
 | Producent | LK |
-| Område | Den IHC-gruppe, produktet ligger i |
+| Område | Den IHC-gruppe, produktet ligger i — eller det område, du allerede har til den: samme navn, gruppens navn som alias, eller samme id |
 | Forbundet via | Controlleren, så hele anlægget hænger på én enhed |
 
 Entiteterne får ikon efter, hvad de er: en tast er `mdi:gesture-tap-button`, et relæ er

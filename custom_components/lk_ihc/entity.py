@@ -4,13 +4,31 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
+from homeassistant.util import slugify
 
 from .const import DOMAIN
 from .controller import IHCConnection
 from .project import Product, Resource
+
+
+def area_for_group(hass: HomeAssistant, group: str) -> str:
+    """Name the area an IHC group belongs in, preferring one the installation already has.
+
+    Home Assistant puts a new device in the area whose name matches the suggested one, and creates
+    that area when none does - it looks at neither ids nor aliases. An area created as "Bedroom"
+    and renamed "Soveværelse" keeps the id bedroom, so the group "Bedroom" would get a second,
+    empty area (bedroom_2). So the group is matched by name, then by alias, then by id.
+    """
+    registry = ar.async_get(hass)
+    area = registry.async_get_area_by_name(group)
+    if area is None:
+        aliased = registry.async_get_areas_by_alias(group)
+        area = aliased[0] if len(aliased) == 1 else registry.async_get_area(slugify(group))
+    return area.name if area else group
 
 
 class IHCEntity(Entity):
@@ -54,6 +72,18 @@ class IHCEntity(Entity):
             suggested_area=product.group or None,
             via_device_id=controller_device_id,
         )
+
+    @property
+    def device_info(self) -> DeviceInfo | None:
+        """The product's device, suggested into the area the installation already has for its group.
+
+        Read when the entity is added, once Home Assistant and its areas are known - which they are
+        not when the entity is built.
+        """
+        info = self._attr_device_info
+        if info is None or self.hass is None or not self._product.group:
+            return info
+        return info | {"suggested_area": area_for_group(self.hass, self._product.group)}
 
     async def async_added_to_hass(self) -> None:
         """Start listening for values from the controller."""
