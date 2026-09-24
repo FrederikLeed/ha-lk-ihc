@@ -1,7 +1,7 @@
 ---
 project: ha-lk-ihc
 repo: https://github.com/FrederikLeed/ha-lk-ihc
-updated: 2026-09-23
+updated: 2026-09-24
 status: active
 ---
 
@@ -22,6 +22,25 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.8.0: de første bidrag udefra — tre pull requests fra hedegaard1, afprøvet på et anlæg med
+  67 produkter og firmware 3.3.44 ved siden af den indbyggede integration. (1) Tastebevægelser:
+  controlleren melder kun ned og op, så `gestures.py` regner `single_press`, `double_press`,
+  `long_press`, `short_release` og `long_release` ud af tiden imellem (0,8 s langt tryk, 0,3 s
+  dobbelttryk-vindue); `press` kommer stadig straks ved hvert tryk, så intet eksisterende går i
+  stykker. Modulet kender ikke Home Assistant og testes med et ur, testen selv flytter; timerne
+  planlægges med `async_call_later` og *skal* være markeret `@callback`, ellers kører HA dem i en
+  arbejdstråd, hvor entiteten ikke kan skrive sin tilstand. (2) RS485 LED-dæmperens kanaler
+  (`rs485_led_dimmer_channel`, `_0x4410`) er produkter med hvert sit dæmpbare lys; modulet selv
+  (`_0x4409`) er kun kassen. (3) En enums værdi strippes som dens valgmuligheder — nogle anlæg har
+  værdier med et efterhængt mellemrum, som HA afviste. (4) Områder: en IHC-gruppe matches mod et
+  område, anlægget allerede har — på navn, på alias eller på id (`slugify`), fordi et omdøbt område
+  beholder sit id; ellers oprettede HA `bedroom_2` osv. for hver gruppe. Opslaget sker i
+  `device_info`, fordi områderne først kendes, når entiteten er føjet til HA. (5) Værdier skrevet i
+  en funktionsbloks *programmer* er konstanter, ikke ressourcer med en tilstand — på deres anlæg
+  gav de 420 sensorer ved navn "Enumerator". `parse_logic` springer `programs` over, og
+  `_async_remove_stale_logic` fjerner ved opsætning de logik-entiteter (`<serial>-logic-<id>`),
+  projektet ikke længere har, og kun dem. Bekræftet på vores eget projekt: `Enumerator` (147471)
+  sad i et program og forsvinder; `Konstantlys skal slukke` bliver. 86 tests, 96 % dækning.
 - v0.7.0: handlinger, der sætter en ressource på dens nummer — det, den indbyggede `ihc` havde,
   og vi manglede. `actions.py` registrerer seks domæne-handlinger med samme navne og felter som de
   indbyggede services (`set_runtime_value_bool/int/float/timer/time`, `pulse`), så en automatisering
@@ -136,6 +155,8 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 ## Næste
 
 - Indsend til HACS' standardliste (`hacs/default`, filen `integration`); actions er grønne.
-- Langt tryk og dobbelttryk som separate hændelsestyper.
+- Tiderne for langt tryk og dobbelttryk som indstillinger (i dag faste 0,8 s / 0,3 s).
+- En pytest-workflow i CI; hedegaard1 har tilbudt sin.
+- `_0x2103`: kataloget siger "Dataline wall switch, 1 key", IHC Viewer siger "Button, 6 keys" — tjek mod kilden.
 - Overvej at flytte RF-sensorernes rå SOAP (`services.py`) over på ihcsdk-sessionen, hvis ihcsdk får
   AirlinkManagementService — indtil da er den rå klient bevidst.

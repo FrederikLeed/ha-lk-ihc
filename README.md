@@ -287,7 +287,8 @@ så den kan vedhæftes en fejlrapport, som den er.
 
 ## Begrænsninger
 
-- Testet mod en LK IHC-controller med firmware 2.7.220 og et projekt på 38 produkter. Anden
+- Testet mod en LK IHC-controller med firmware 2.7.220 og et projekt på 38 produkter, og af en
+  bidragyder mod firmware 3.3.44 og 67 produkter (RS485 LED-dæmpere, 80 taster). Anden
   firmware bør virke, fordi grænsefladen ikke har ændret sig i årevis, men det er ikke bevist her.
 - Langt tryk og dobbelttryk regnes ud fra, hvornår controlleren melder tasten ned og op, med faste
   tider: 0,8 sekunder for et langt tryk og 0,3 sekunder til et dobbelttryk. De kan ikke ændres endnu.

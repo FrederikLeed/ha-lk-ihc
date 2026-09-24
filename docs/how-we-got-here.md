@@ -48,6 +48,12 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
   sammenligningen nedenfor). Skrivebeskyttelsen og projekt-afgrænsningen holder uændret; "kendte
   id'er" blev bare udvidet til alle ressourcer i projektet, så en funktionsbloks timer kan sættes,
   selvom den ingen entitet har.
+- **v0.8.0** — de første bidrag udefra (hedegaard1, afprøvet på et anlæg med 67 produkter og firmware
+  3.3.44): tastebevægelser regnet ud af timingen (`single_press`, `double_press`, `long_press` og
+  de to slip), RS485 LED-dæmperens kanaler som dæmpbare lys, områder matchet mod dem, anlægget
+  allerede har, og — den vigtigste — konstanterne i funktionsblokkenes programmer læses ikke
+  længere som enums. På deres anlæg var 420 af 459 "enums" den slags; på vores én af to. Det er
+  præcis den test, ét hus ikke kan give: et andet anlæg med andre moduler og en anden installatør.
 
 ## Undersøgelse 1 — firmware-nedbrydningen
 
@@ -102,6 +108,7 @@ at flag og enums er adresserbare ressourcer — og det blev til v0.6.0.
 | Opsætning fra brugerfladen | nej | ja | ja |
 | Enheder pr. produkt | nej | nej | ja |
 | Taster på vægkontakter som hændelser | nej | nej | ja |
+| Enkelt-, dobbelt- og langt tryk | nej | nej | ja, fra v0.8.0 |
 | Funktionsbloks-koblinger | nej | nej | ja |
 | Diagnostik for trådløst / ur / netværk | nej | nej | ja |
 | Flag og enums | nej | nej | ja |
