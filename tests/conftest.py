@@ -62,8 +62,17 @@ class FakeIHCController:
     class _Client:
         """The bit of the sdk that answers for the controller itself."""
 
+        def __init__(self) -> None:
+            self.connection = self._Connection()
+
         def get_system_info(self) -> dict[str, Any]:
             return dict(SYSTEM_INFO)
+
+        class _Connection:
+            """The sdk's transport, which remembers the exception it swallowed last."""
+
+            def __init__(self) -> None:
+                self.last_exception: Exception | None = None
 
     # --- the parts the integration uses ---
     def authenticate(self) -> bool:

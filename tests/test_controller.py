@@ -44,6 +44,18 @@ async def test_refused_login(hass: HomeAssistant, connection):
         await connection.async_connect()
 
 
+async def test_login_that_never_arrived_is_not_a_refusal(connection):
+    """The sdk swallows a transport error during login and returns False, like a refused password.
+
+    A host that boots before its network is up must get a retry, not a request for the password.
+    """
+    fake = FakeIHCController.instances[-1]
+    fake.auth_result = False
+    fake.client.connection.last_exception = OSError("no route to host")
+    with pytest.raises(IHCConnectError, match="192.0.2.10"):
+        await connection.async_connect()
+
+
 async def test_unreachable_controller(connection):
     """A transport error becomes a connect error, with the address in the message."""
     FakeIHCController.instances[-1].auth_error = OSError("no route to host")

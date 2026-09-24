@@ -69,6 +69,21 @@ def apply_http_timeout(controller: IHCController, timeout: float = HTTP_TIMEOUT)
     return True
 
 
+def last_transport_error(controller: Any) -> Exception | None:
+    """The exception the sdk swallowed on its last request, if there was one.
+
+    The sdk's soap_action catches a transport or parse error, logs it and returns False, so a login
+    that never reached the controller comes back exactly like one the controller refused. The
+    connection object keeps the exception, and that is the only way to tell the two apart. When a
+    Home Assistant host boots faster than the network or the controller answers, this is the
+    difference between retrying setup and wrongly asking for the password.
+    """
+    try:
+        return controller.client.connection.last_exception
+    except AttributeError:  # a different sdk version, or a stand-in in a test
+        return None
+
+
 class IHCConnection:
     """One connection to one IHC controller."""
 
@@ -100,6 +115,13 @@ class IHCConnection:
         except Exception as err:  # the sdk raises whatever the transport raised
             raise IHCConnectError(f"Could not reach the IHC controller at {self.url}: {err}") from err
         if not authenticated:
+            transport_error = last_transport_error(self._controller)
+            if transport_error is not None:
+                # The login never reached the controller. Reported as a connection problem, so
+                # setup is retried - an auth error would stop retrying and ask for the password.
+                raise IHCConnectError(
+                    f"Could not reach the IHC controller at {self.url}: {transport_error}"
+                ) from transport_error
             raise IHCAuthError("The IHC controller refused the username or password")
         self.info = await self.hass.async_add_executor_job(self._controller.client.get_system_info) or {}
         return self.info

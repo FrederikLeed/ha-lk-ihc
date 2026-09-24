@@ -54,6 +54,10 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
   allerede har, og — den vigtigste — konstanterne i funktionsblokkenes programmer læses ikke
   længere som enums. På deres anlæg var 420 af 459 "enums" den slags; på vores én af to. Det er
   præcis den test, ét hus ikke kan give: et andet anlæg med andre moduler og en anden installatør.
+- **v0.8.2** — fundet ved den genstart, der satte v0.8.1 i drift: en login, der ikke nåede
+  controlleren, blev meldt som forkert adgangskode, og HA holdt op med at prøve. ihcsdk sluger
+  transportfejlen og returnerer False; kun `connection.last_exception` fortæller, hvad der skete.
+  Nu bliver det en forbindelsesfejl, som HA prøver igen.
 
 ## Undersøgelse 1 — firmware-nedbrydningen
 
