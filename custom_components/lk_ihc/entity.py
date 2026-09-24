@@ -66,7 +66,7 @@ class IHCEntity(Entity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{serial}-{product.product_id}")},
             name=product.device_name,
-            manufacturer="LK",
+            manufacturer="Schneider Electric",
             model=product.model,
             model_id=product.model_id or None,
             suggested_area=product.group or None,
