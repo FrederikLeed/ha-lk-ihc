@@ -1,5 +1,8 @@
 {
   "config": {
+    "initiate_flow": {
+      "user": "Tilføj IHC-controller"
+    },
     "step": {
       "user": {
         "title": "Forbind til IHC-controlleren",
