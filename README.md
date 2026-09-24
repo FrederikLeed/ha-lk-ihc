@@ -292,7 +292,9 @@ så den kan vedhæftes en fejlrapport, som den er.
   firmware bør virke, fordi grænsefladen ikke har ændret sig i årevis, men det er ikke bevist her.
 - Langt tryk og dobbelttryk regnes ud fra, hvornår controlleren melder tasten ned og op, med faste
   tider: 0,8 sekunder for et langt tryk og 0,3 sekunder til et dobbelttryk. De kan ikke ændres endnu.
-- Scener, timere og andre funktionsbloks-ressourcer eksponeres ikke.
+- Funktionsblokkenes udgange — fx om alarmen er tilkoblet — kommer med som binære sensorer på
+  controller-enheden, navngivet efter blokken og deaktiverede som flagene. Slå dem til, du har brug
+  for. Scener, timere og funktionsblokkenes øvrige ressourcer eksponeres ikke.
 - Controlleren har ikke noget begreb om "utilgængelig" for et enkelt produkt, så en entitet beholder
   sin seneste kendte værdi, indtil controlleren melder en ny.
 - Projektet læses ved opsætningen. Ændrer du anlægget i IHC-softwaren, skal opsætningen
