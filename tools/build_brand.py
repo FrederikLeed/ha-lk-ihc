@@ -23,37 +23,43 @@ ROOT = Path(__file__).resolve().parents[1]
 BRAND_DIR = ROOT / "custom_components" / "lk_ihc" / "brand"
 DOCS_DIR = ROOT / "docs" / "img"
 
-FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+FONT = "'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
 
-# The mark: a wall plate with two keys, the left one pressed, and the press leaving as a signal.
-# It has to read at 48 pixels, so it is four shapes and nothing else.
-BLUE = "#0b7ec4"
-BLUE_DARK = "#075d92"
-PLATE = "#f7fafc"
-KEY = "#d9e3ea"
-KEY_PRESSED = "#ffc65c"
-SIGNAL = "#ffffff"
+# The mark: a DIN-rail IHC module - the box every installation has rows of - with its terminals
+# and its name on the label. Flat on purpose: it has to read at 48 pixels, where shading only blurs.
+BLUE = "#1c73d9"
+NAVY = "#1c3f73"
+BODY = "#eef1f4"
+BODY_EDGE = "#d3d9df"
+SCREW_RING = "#2f9d5c"
+SCREW = "#8d9399"
+SLOT = "#3f4449"
+LABEL = "#ffffff"
+
+
+def _screws(cy: int) -> str:
+    """One row of ten terminal screws, centred on cy."""
+    return "".join(
+        f'<circle cx="{cx}" cy="{cy}" r="11" fill="{SCREW_RING}"/>'
+        f'<circle cx="{cx}" cy="{cy}" r="7.5" fill="{SCREW}"/>'
+        f'<path d="M{cx - 5} {cy + 5} L{cx + 5} {cy - 5}" stroke="{SLOT}" stroke-width="2.6" stroke-linecap="round"/>'
+        for cx in range(103, 410, 34)
+    )
 
 
 def mark(size: int, *, background: bool = True) -> str:
     """Return the icon as SVG at the given size. The drawing is laid out on a 512 grid."""
-    bg = (
-        f'<rect width="512" height="512" rx="112" fill="{BLUE}"/>'
-        f'<rect y="256" width="512" height="256" rx="112" fill="{BLUE_DARK}" opacity="0.25"/>'
-        if background
-        else ""
-    )
+    bg = f'<rect width="512" height="512" rx="112" fill="{BLUE}"/>' if background else ""
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 512 512">
   {bg}
-  <rect x="96" y="96" width="272" height="320" rx="40" fill="{PLATE}"/>
-  <rect x="130" y="132" width="204" height="118" rx="20" fill="{KEY_PRESSED}"/>
-  <rect x="130" y="262" width="204" height="118" rx="20" fill="{KEY}"/>
-  <path d="M166 191 h60" stroke="{BLUE_DARK}" stroke-width="22" stroke-linecap="round" opacity="0.5"/>
-  <path d="M238 321 h60" stroke="{BLUE}" stroke-width="22" stroke-linecap="round" opacity="0.3"/>
-  <g fill="none" stroke="{SIGNAL}" stroke-width="20" stroke-linecap="round" opacity="0.95">
-    <path d="M392 156 a64 64 0 0 1 0 92"/>
-    <path d="M428 124 a112 112 0 0 1 0 156"/>
-  </g>
+  <rect x="80" y="80" width="352" height="44" rx="8" fill="{BODY}"/>
+  <rect x="80" y="364" width="352" height="48" rx="8" fill="{BODY}"/>
+  <rect x="68" y="116" width="376" height="252" rx="6" fill="{BODY}" stroke="{BODY_EDGE}" stroke-width="2"/>
+  <rect x="76" y="160" width="360" height="164" rx="5" fill="{NAVY}"/>
+  {_screws(138)}
+  {_screws(346)}
+  <text x="256" y="284" font-family="{FONT}" font-size="98" font-weight="700" fill="{LABEL}"
+    text-anchor="middle" letter-spacing="1">LK IHC</text>
 </svg>
 """
 
@@ -94,7 +100,7 @@ LIGHT = Palette(
     "#d0d7de",
     "#1f2328",
     "#59636e",
-    "#0b7ec4",
+    "#1c73d9",
     "#ffffff",
     "#ddf4ff",
     "#0a3069",

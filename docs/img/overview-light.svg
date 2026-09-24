@@ -1,43 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" role="img">
   <defs><marker id="a-light" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8c959f"/></marker></defs>
   <rect width="1000" height="470" fill="#ffffff"/>
-  <text x="40" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="#1f2328" text-anchor="start">One controller, read once, turned into devices you can use</text>
-  <text x="40" y="70" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#59636e" text-anchor="start">The project file already knows what every product is and where it sits. Nothing has to be listed by hand.</text>
+  <text x="40" y="46" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="#1f2328" text-anchor="start">One controller, read once, turned into devices you can use</text>
+  <text x="40" y="70" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#59636e" text-anchor="start">The project file already knows what every product is and where it sits. Nothing has to be listed by hand.</text>
   <rect x="40" y="104" width="232" height="150" rx="12" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="62" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">IHC controller</text>
-  <text x="62" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Signed in from the</text>
-  <text x="62" y="181" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">user interface.</text>
-  <text x="62" y="200" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Sends its project</text>
-  <text x="62" y="219" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">and every change.</text>
+  <text x="62" y="136" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">IHC controller</text>
+  <text x="62" y="162" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Signed in from the</text>
+  <text x="62" y="181" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">user interface.</text>
+  <text x="62" y="200" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Sends its project</text>
+  <text x="62" y="219" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">and every change.</text>
   <rect x="320" y="104" width="232" height="150" rx="12" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="342" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">The project</text>
-  <text x="342" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Groups become areas.</text>
-  <text x="342" y="181" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Products become devices.</text>
-  <text x="342" y="200" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Resources become</text>
-  <text x="342" y="219" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">entities.</text>
+  <text x="342" y="136" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">The project</text>
+  <text x="342" y="162" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Groups become areas.</text>
+  <text x="342" y="181" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Products become devices.</text>
+  <text x="342" y="200" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Resources become</text>
+  <text x="342" y="219" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">entities.</text>
   <path d="M278 179 L314 179" fill="none" stroke="#8c959f" stroke-width="2" stroke-linecap="round" marker-end="url(#a-light)"/>
   <rect x="600" y="104" width="360" height="300" rx="12" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="622" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">In Home Assistant</text>
+  <text x="622" y="136" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2328" text-anchor="start">In Home Assistant</text>
   <rect x="622" y="152" width="57" height="26" rx="13" fill="#ddf4ff"/>
-  <text x="650.3" y="169.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Lights</text>
-  <text x="690.6" y="170" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">lamp outlets and dimmers</text>
+  <text x="650.3" y="169.5" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Lights</text>
+  <text x="690.6" y="170" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">lamp outlets and dimmers</text>
   <rect x="622" y="196" width="71" height="26" rx="13" fill="#ddf4ff"/>
-  <text x="657.4" y="213.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Switches</text>
-  <text x="704.8" y="214" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">relays and plug outlets</text>
+  <text x="657.4" y="213.5" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Switches</text>
+  <text x="704.8" y="214" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">relays and plug outlets</text>
   <rect x="622" y="240" width="113" height="26" rx="13" fill="#ddf4ff"/>
-  <text x="678.7" y="257.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Binary sensors</text>
-  <text x="747.4" y="258" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">movement, door, smoke, water</text>
+  <text x="678.7" y="257.5" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Binary sensors</text>
+  <text x="747.4" y="258" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">movement, door, smoke, water</text>
   <rect x="622" y="284" width="64" height="26" rx="13" fill="#ddf4ff"/>
-  <text x="653.85" y="301.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Sensors</text>
-  <text x="697.7" y="302" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">temperature</text>
+  <text x="653.85" y="301.5" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Sensors</text>
+  <text x="697.7" y="302" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">temperature</text>
   <rect x="622" y="328" width="57" height="26" rx="13" fill="#ddf4ff"/>
-  <text x="650.3" y="345.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Events</text>
-  <text x="690.6" y="346" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">every key on every wall switch</text>
+  <text x="650.3" y="345.5" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0a3069" text-anchor="middle">Events</text>
+  <text x="690.6" y="346" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">every key on every wall switch</text>
   <path d="M558 179 L594 179" fill="none" stroke="#8c959f" stroke-width="2" stroke-linecap="round" marker-end="url(#a-light)"/>
-  <rect x="40" y="300" width="512" height="104" rx="12" fill="#f6f8fa" stroke="#0b7ec4" stroke-width="1.5" stroke-dasharray="6 5"/>
-  <text x="62" y="332" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#0b7ec4" text-anchor="start">The part that was missing</text>
-  <text x="62" y="356" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">A key press fires an event entity, so any key in the house can start an</text>
-  <text x="62" y="375" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">automation. The key keeps doing what the installation already uses it for.</text>
-  <path d="M556 346 L594 346" fill="none" stroke="#0b7ec4" stroke-width="2" stroke-linecap="round" marker-end="url(#a-light)" stroke-dasharray="5 4"/>
-  <text x="40" y="440" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Read-only until you say otherwise: everything is shown, nothing is switched.</text>
+  <rect x="40" y="300" width="512" height="104" rx="12" fill="#f6f8fa" stroke="#1c73d9" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="62" y="332" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#1c73d9" text-anchor="start">The part that was missing</text>
+  <text x="62" y="356" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">A key press fires an event entity, so any key in the house can start an</text>
+  <text x="62" y="375" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">automation. The key keeps doing what the installation already uses it for.</text>
+  <path d="M556 346 L594 346" fill="none" stroke="#1c73d9" stroke-width="2" stroke-linecap="round" marker-end="url(#a-light)" stroke-dasharray="5 4"/>
+  <text x="40" y="440" font-family="'Liberation Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#59636e" text-anchor="start">Read-only until you say otherwise: everything is shown, nothing is switched.</text>
 </svg>
