@@ -17,7 +17,9 @@ tells you anything worth an entity.
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
+from typing import Any
 
 from defusedxml import ElementTree
 
@@ -62,6 +64,20 @@ class Logic:
         return [*self.flags, *self.enums]
 
 
+def _outside_programs(element: Any) -> Iterator[Any]:
+    """Every element below this one, leaving out the function blocks' programs.
+
+    A program writes the values it tests and sets as resources of their own: "if the mode is Last
+    level" holds a resource_enum with the value Last level. Those are constants in the program,
+    not resources with a state, and IHC Visual names them "Enumerator" or nothing at all.
+    """
+    for child in element:
+        if child.tag == "programs":
+            continue
+        yield child
+        yield from _outside_programs(child)
+
+
 def parse_logic(xml: str | bytes) -> Logic:
     """Read the flags and enums from the project.
 
@@ -82,7 +98,7 @@ def parse_logic(xml: str | bytes) -> Logic:
     logic = Logic()
     for group in root.iter("group"):
         group_name = _text(group.get("name"))
-        for element in group.iter():
+        for element in _outside_programs(group):
             ihc_id = _int_id(element.get("id"))
             if ihc_id is None:
                 continue

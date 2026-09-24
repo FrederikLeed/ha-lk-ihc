@@ -180,3 +180,24 @@ def test_logic_reads_flags_and_enums() -> None:
     # Options come from the shared definition the enum points at by typedef.
     assert enum.options == ("Auto", "Manual")
     assert enum.kind == "enum"
+
+
+def test_values_written_in_a_program_are_not_logic() -> None:
+    """A program's conditions and actions hold enum values as resources; only the block's own count."""
+    from custom_components.lk_ihc.logic import parse_logic
+
+    logic = parse_logic(
+        """<utcs><groups><group name="Hall">
+          <functionblock id="_0x100" name="Dimmer block">
+            <settings><resource_enum id="_0x101" name="Start level" typedef="_0x900"/></settings>
+            <outputs><resource_enum id="_0x102" name="Dimmer status" typedef="_0x900"/></outputs>
+            <programs><program_simple name="Program"><actions>
+              <action><resource_enum id="_0x103" name="Enumerator" typedef="_0x900"/></action>
+              <program_case name="Case">
+                <case_action><resource_enum id="_0x104" typedef="_0x900"/></case_action>
+              </program_case>
+            </actions></program_simple></programs>
+          </functionblock>
+        </group></groups></utcs>"""
+    )
+    assert [enum.name for enum in logic.enums] == ["Start level", "Dimmer status"]

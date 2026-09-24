@@ -7,9 +7,10 @@ from dataclasses import dataclass, field
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_URL, CONF_USERNAME, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.typing import ConfigType
 
 from .actions import async_register_actions
@@ -87,6 +88,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
         len(status.rf_devices),
     )
     _LOGGER.debug("IHC logic: %s flags, %s enums", len(logic.flags), len(logic.enums))
+    _async_remove_stale_logic(hass, entry, connection.serial_number, logic)
 
     device_registry = dr.async_get(hass)
     controller_device = device_registry.async_get_or_create(
@@ -111,6 +113,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     return True
+
+
+@callback
+def _async_remove_stale_logic(hass: HomeAssistant, entry: IHCConfigEntry, serial: str, logic: Logic) -> None:
+    """Remove the entities of flags and enums the project no longer has.
+
+    Earlier versions read the values written inside the function blocks' programs as enums too -
+    several hundred on a real installation - and a project changes whenever an installer edits it.
+    Home Assistant keeps an entity the integration stops providing, so they would otherwise stay
+    behind as unavailable. Only the controller's logic is touched, never a product's entities.
+    """
+    prefix = f"{serial}-logic-"
+    wanted = {f"{prefix}{resource.ihc_id}" for resource in logic.resources}
+    entities = er.async_get(hass)
+    for registry_entry in er.async_entries_for_config_entry(entities, entry.entry_id):
+        if registry_entry.unique_id.startswith(prefix) and registry_entry.unique_id not in wanted:
+            entities.async_remove(registry_entry.entity_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
