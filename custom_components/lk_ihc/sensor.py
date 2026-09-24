@@ -63,12 +63,20 @@ class IHCSensor(IHCEntity, SensorEntity):
 
 
 class IHCEnumSensor(IHCLogicEntity, SensorEntity):
-    """An enumeration in the controller's logic, showing its current named state."""
+    """An enumeration in the controller's logic, showing its current named state.
+
+    One in a function block's settings is how the block was set up ("PIR function: step high/off")
+    and changes only when the project is reprogrammed, so it starts disabled, like the flags. One in
+    the block's outputs says how things stand now ("Dimmer status: off"), and stays enabled.
+    """
+
+    _ICONS = {"settings": "mdi:cog", "outputs": "mdi:export"}
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Offer the enum's names as options, so the value reads as a known state."""
         super().__init__(*args, **kwargs)
-        self._attr_icon = "mdi:format-list-bulleted"
+        self._attr_icon = self._ICONS.get(self._resource.section, "mdi:format-list-bulleted")
+        self._attr_entity_registry_enabled_default = self._resource.section != "settings"
         if self._resource.options:
             self._attr_options = list(self._resource.options)
             self._attr_device_class = SensorDeviceClass.ENUM

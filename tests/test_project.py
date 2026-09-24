@@ -226,3 +226,28 @@ def test_function_block_outputs_are_logic() -> None:
     ]
     assert all(o.kind == "output" for o in logic.outputs)
     assert {o.ihc_id for o in logic.resources} >= {0x101, 0x102}
+
+
+def test_logic_knows_its_block_and_names_it_shares() -> None:
+    """A resource knows the block and part of it that it sits in, and whether its name is taken in its group."""
+    from custom_components.lk_ihc.logic import parse_logic
+
+    logic = parse_logic(
+        """<utcs><groups><group name="Outdoor">
+          <functionblock id="_0x100" name="1.4.09. PIR controlled output (front spot)">
+            <settings><resource_enum id="_0x101" name="Dusk" typedef="_0x900"/></settings>
+            <outputs><resource_output id="_0x102" name="Output"/></outputs>
+          </functionblock>
+          <functionblock id="_0x200" name="1.4.09. PIR controlled output (back spot)">
+            <settings><resource_enum id="_0x201" name="Dusk" typedef="_0x900"/></settings>
+            <outputs><resource_enum id="_0x202" name="Status" typedef="_0x900"/></outputs>
+          </functionblock>
+          <resource_flag id="_0x300" name="Holiday"/>
+        </group></groups></utcs>"""
+    )
+    by_id = {resource.ihc_id: resource for resource in logic.resources}
+    assert (by_id[0x101].block, by_id[0x101].section) == ("PIR controlled output (front spot)", "settings")
+    assert (by_id[0x202].block, by_id[0x202].section) == ("PIR controlled output (back spot)", "outputs")
+    assert (by_id[0x300].block, by_id[0x300].section) == ("", "")
+    assert by_id[0x101].name_shared and by_id[0x201].name_shared
+    assert not any(by_id[ihc_id].name_shared for ihc_id in (0x102, 0x202, 0x300))
