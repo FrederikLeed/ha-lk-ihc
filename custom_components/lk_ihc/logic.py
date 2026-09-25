@@ -5,6 +5,10 @@ only inside the controller's own logic: flags it sets and tests, and enumeration
 named states. They are not wired to anything you can touch, so Home Assistant never showed them,
 and until now the only way to know a flag's state was to infer it from what the lights did.
 
+A function block's outputs belong here too. Many are pulses that feed a product, but some say what
+the controller's logic has concluded and no product shows: whether the alarm is armed, whether a
+contact loop is open, whether a dimmer is on.
+
 These are read-only here on purpose. A flag or an enum is an input to logic the controller runs;
 writing one from Home Assistant would reach into that logic blind, and ihcsdk has no setter for an
 enum in any case. So they are exposed to be seen, not driven, and they live on the controller
@@ -17,8 +21,9 @@ tells you anything worth an entity.
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from defusedxml import ElementTree
@@ -41,45 +46,69 @@ def _text(value: str | None) -> str:
 
 @dataclass(frozen=True, slots=True)
 class LogicResource:
-    """One logic resource: a flag (on/off) or an enum (one of several named states)."""
+    """One logic resource: a flag or a block output (on/off), or an enum (one of several named states)."""
 
     ihc_id: int
     name: str
-    kind: str  # "flag" or "enum"
+    kind: str  # "flag", "enum" or "output"
     group: str = ""
     # For an enum, the names it can take, in project order. Empty for a flag.
     options: tuple[str, ...] = ()
+    # The function block the resource sits in, without its catalogue number, and the part of the
+    # block: "settings" or "outputs". Both empty for a resource that is not in a block.
+    block: str = ""
+    section: str = ""
+    # Another resource in the same group has the same name. An installation uses the same block in
+    # several places, so this is common, and then only the block tells them apart.
+    name_shared: bool = False
 
 
 @dataclass(slots=True)
 class Logic:
-    """The installation's flags and enums."""
+    """The installation's flags, enums and function block outputs."""
 
     flags: list[LogicResource] = field(default_factory=list)
     enums: list[LogicResource] = field(default_factory=list)
+    outputs: list[LogicResource] = field(default_factory=list)
 
     @property
     def resources(self) -> list[LogicResource]:
-        """Every logic resource, flags and enums together."""
-        return [*self.flags, *self.enums]
+        """Every logic resource together."""
+        return [*self.flags, *self.enums, *self.outputs]
 
 
-def _outside_programs(element: Any) -> Iterator[Any]:
-    """Every element below this one, leaving out the function blocks' programs.
+def _block_name(block: Any) -> str:
+    """Return a block's name without its catalogue number ("6.2.01.b. "), as FunctionBlock.short_name has it."""
+    if block is None:
+        return ""
+    name = _text(block.get("name"))
+    number, _, rest = name.partition(". ")
+    return (rest or number).strip()
 
-    A program writes the values it tests and sets as resources of their own: "if the mode is Last
-    level" holds a resource_enum with the value Last level. Those are constants in the program,
-    not resources with a state, and IHC Visual names them "Enumerator" or nothing at all.
+
+def _outside_programs(element: Any, block: Any = None, section: str = "") -> Iterator[tuple[Any, Any, str]]:
+    """Every element below this one, with the function block and part of it that it sits in.
+
+    The function blocks' programs are left out. A program writes the values it tests and sets as
+    resources of their own: "if the mode is Last level" holds a resource_enum with the value Last
+    level. Those are constants in the program, not resources with a state, and IHC Visual names
+    them "Enumerator" or nothing at all.
     """
     for child in element:
         if child.tag == "programs":
             continue
-        yield child
-        yield from _outside_programs(child)
+        if child.tag == "functionblock":
+            child_block, child_section = child, ""
+        elif element is block:
+            child_block, child_section = block, child.tag
+        else:
+            child_block, child_section = block, section
+        yield child, child_block, child_section
+        yield from _outside_programs(child, child_block, child_section)
 
 
 def parse_logic(xml: str | bytes) -> Logic:
-    """Read the flags and enums from the project.
+    """Read the flags, enums and function block outputs from the project.
 
     Enum options come from a shared definition the resource points at by `typedef`, so the
     definitions are collected first and then looked up. A resource whose definition is missing
@@ -98,24 +127,31 @@ def parse_logic(xml: str | bytes) -> Logic:
     logic = Logic()
     for group in root.iter("group"):
         group_name = _text(group.get("name"))
-        for element in _outside_programs(group):
+        for element, block, section in _outside_programs(group):
             ihc_id = _int_id(element.get("id"))
             if ihc_id is None:
                 continue
+            where = {"group": group_name, "block": _block_name(block), "section": section}
             if element.tag == "resource_flag":
-                logic.flags.append(
-                    LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="flag", group=group_name)
-                )
+                logic.flags.append(LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="flag", **where))
             elif element.tag == "resource_enum":
                 logic.enums.append(
                     LogicResource(
                         ihc_id=ihc_id,
                         name=_text(element.get("name")),
                         kind="enum",
-                        group=group_name,
                         options=enum_options.get(element.get("typedef", ""), ()),
+                        **where,
                     )
                 )
+            elif element.tag == "resource_output" and section == "outputs":
+                logic.outputs.append(
+                    LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="output", **where)
+                )
+
+    counts = Counter((resource.name, resource.group) for resource in logic.resources)
+    for resources in (logic.flags, logic.enums, logic.outputs):
+        resources[:] = [replace(r, name_shared=counts[r.name, r.group] > 1) for r in resources]
     return logic
 
 
