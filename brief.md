@@ -1,7 +1,7 @@
 ---
 project: ha-lk-ihc
 repo: https://github.com/FrederikLeed/ha-lk-ihc
-updated: 2026-09-24
+updated: 2026-09-27
 status: active
 ---
 
@@ -22,6 +22,18 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.9.0: to PRs mere fra hedegaard1 (#4, #5). (1) Funktionsblokkenes *udgange* (`resource_output`
+  i en bloks `outputs`) er binære sensorer på controller-enheden, deaktiverede som flagene — det er
+  dem, der siger, hvad logikken har konkluderet, og som intet produkt viser (alarm tilkoblet, kontakt-
+  sløjfe åben). 53 på vores anlæg, 143 på hans. Udgange i programmer springes over som enums, og de
+  ryddes op som logik-entiteter. (2) Logikken navngives med rummet ("Lysdæmper status – Køkken") og,
+  når navnet er delt i rummet, med blokkens navn. Parseren husker nu `block`, `section`
+  (`settings`/`outputs`) og `name_shared`. En enum i `settings` er opsætning og starter deaktiveret
+  (`mdi:cog`); en i `outputs` er tilstand og er slået til (`mdi:export`). Kendt hul: fire ens blokke
+  med katalognavn i samme rum får stadig ens navne — næste skridt er at falde tilbage på det produkt,
+  udgangen driver (koblingen i `project.py` kender det). (3) Producent er "Schneider Electric", som
+  ejer LK. (4) Knappen hedder "Tilføj IHC-controller" (`config.initiate_flow.user`). (5) CI kører nu
+  pytest på hver PR (`.github/workflows/tests.yml`). 91 tests, 96 % dækning.
 - v0.8.2: en login, der aldrig nåede controlleren, blev meldt som forkert adgangskode. ihcsdk's
   `soap_action` fanger transportfejl, logger dem og returnerer False — præcis som ved en afvist
   login — og vi oversatte False til `ConfigEntryAuthFailed`, som HA *ikke* prøver igen, men i stedet
@@ -168,7 +180,7 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 - HACS standardliste: indsendt 2026-09-24 som [hacs/default#11261](https://github.com/hacs/default/pull/11261). Køen tager måneder; tjek status i [backloggen](https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc). Bliver den sat til draft, er det en småting, der skal rettes, og så sættes den til "ready for review" igen.
 - Tiderne for langt tryk og dobbelttryk som indstillinger (i dag faste 0,8 s / 0,3 s).
-- En pytest-workflow i CI; hedegaard1 har tilbudt sin.
+- Delte navne på logik: fald tilbage på det produkt, en bloks udgang driver, når også blokkens navn er delt.
 - `_0x2103`: kataloget siger "Dataline wall switch, 1 key", IHC Viewer siger "Button, 6 keys" — tjek mod kilden.
 - Overvej at flytte RF-sensorernes rå SOAP (`services.py`) over på ihcsdk-sessionen, hvis ihcsdk får
   AirlinkManagementService — indtil da er den rå klient bevidst.
