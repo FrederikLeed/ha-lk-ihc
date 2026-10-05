@@ -1,7 +1,7 @@
 ---
 project: ha-lk-ihc
 repo: https://github.com/FrederikLeed/ha-lk-ihc
-updated: 2026-09-27
+updated: 2026-10-05
 status: active
 ---
 
@@ -22,6 +22,11 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.9.1: hassfest begyndte 5/10 at afvise `==`-pins på pakker, HA selv afhænger af (`ihcsdk`,
+  `defusedxml`): de skal være `>=`, så de kan følge med HA's egne versioner. Manifestet rettet, og
+  `CONFIG_SCHEMA = config_entry_only_config_schema(DOMAIN)` tilføjet, som hassfest advarede om for
+  en integration med `async_setup` uden YAML. Fundet af det ugentlige, planlagte hassfest-kørsel —
+  det er præcis det, den er til.
 - v0.9.0: to PRs mere fra hedegaard1 (#4, #5). (1) Funktionsblokkenes *udgange* (`resource_output`
   i en bloks `outputs`) er binære sensorer på controller-enheden, deaktiverede som flagene — det er
   dem, der siger, hvad logikken har konkluderet, og som intet produkt viser (alarm tilkoblet, kontakt-
