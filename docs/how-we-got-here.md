@@ -6,7 +6,7 @@ API-vurdering — hvis største værdi var at fortælle os, hvad vi *ikke* skull
 
 ## Udgangspunktet
 
-Home Assistant har allerede en `ihc`-integration, skrevet og vedligeholdt af Jesper Nielsen
+Home Assistant har allerede en `ihc`-integration, skrevet af Jens Østergaard Nielsen
 ([dingusdk](https://github.com/dingusdk)), som også står bag IHC-sdk'et. Den virker, og den er udbredt, men den kan kun sættes op i YAML, opretter ingen enheder og mapper kun
 udgange og sensorer. I et almindeligt IHC-hus betyder det, at lampeudtag og relæer dukker op som nøgne
 entiteter, mens vægkontakterne, folk faktisk trykker på — den mest brugbare trigger, et IHC-hus har —
@@ -44,7 +44,7 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
   deaktiverede som standard).
 - **v0.7.0** — handlinger, der sætter en ressource på dens nummer: `set_runtime_value_bool/int/
   float/timer/time` og `pulse`, med samme navne og felter som den indbyggede integrations services.
-  Det lukkede det største funktionelle hul i forhold til Jesper Nielsens integration (se
+  Det lukkede det største funktionelle hul i forhold til Jens Østergaard Nielsens integration (se
   sammenligningen nedenfor). Skrivebeskyttelsen og projekt-afgrænsningen holder uændret; "kendte
   id'er" blev bare udvidet til alle ressourcer i projektet, så en funktionsbloks timer kan sættes,
   selvom den ingen entitet har.
@@ -100,7 +100,7 @@ projektmodel — navnene, områderne, produkterne, koblingerne og diagnostikken,
 integration værd at have, kommer alt sammen fra at parse projektet, og det hjælper openapi ikke med.
 
 En tidligere note i projektet kaldte `ihcsdk` "uvedligeholdt" og brugte det som argument for at
-udskifte det. Det var forkert: `ihcsdk` havde en udgivelse i marts 2026, vedligeholdes aktivt af Jesper Nielsen —
+udskifte det. Det var forkert: `ihcsdk` havde en udgivelse i marts 2026, vedligeholdes aktivt af Jens Østergaard Nielsen —
 samme mand som bag den indbyggede integration — og er afprøvet i tusindvis af huse. At bytte et sundt,
 gennemtestet bibliotek ud med vores egen kode — på det, der styrer lyset — i bytte for ingenting: det
 er en dårlig handel. **Transporten bliver på `ihcsdk`.**
@@ -114,7 +114,7 @@ at flag og enums er adresserbare ressourcer — og det blev til v0.6.0.
 | | indbygget `ihc` | `haihc-betatest` (forfatterens beta) | `lk_ihc` |
 |---|---|---|---|
 | Opsætning fra brugerfladen | nej | ja | ja |
-| Enheder pr. produkt | nej | nej | ja |
+| Enheder pr. produkt | nej | ja | ja |
 | Taster på vægkontakter som hændelser | nej | nej | ja |
 | Enkelt-, dobbelt- og langt tryk | nej | nej | ja, fra v0.8.0 |
 | Funktionsbloks-koblinger | nej | nej | ja |

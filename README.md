@@ -340,7 +340,7 @@ fra en opdigtet fil i `tests/fixtures/`.
 
 ## Tak og licens
 
-Denne integration står på skuldrene af **Jesper Nielsen** ([dingusdk](https://github.com/dingusdk)).
+Denne integration står på skuldrene af **Jens Østergaard Nielsen** ([dingusdk](https://github.com/dingusdk)).
 Han har skrevet og vedligeholder [ihcsdk](https://github.com/dingusdk/PythonIhcSdk), som al
 kommunikation med controlleren går igennem, og han er ophavsmand til Home Assistants indbyggede
 `ihc`-integration, som produkt-identifikatorerne og deres betydning kommer fra. Uden hans mangeårige

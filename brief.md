@@ -13,7 +13,7 @@ indbyggede `ihc`-integration er på legacy-kvalitetsniveau, ingen vedligeholder 
 opretter og kun mapper udgange og sensorer — så vægkontakterne, der er den mest brugbare trigger i et
 IHC-hus, er usynlige.
 
-Bygget oven på Jesper Nielsens ([dingusdk](https://github.com/dingusdk)) arbejde: `ihcsdk` er hans,
+Bygget oven på Jens Østergaard Nielsens ([dingusdk](https://github.com/dingusdk)) arbejde: `ihcsdk` er hans,
 og det samme er den indbyggede `ihc`-integration, som kataloget over produkt-identifikatorer stammer
 fra. Han krediteres i README og skal blive ved med at være det.
 
