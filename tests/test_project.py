@@ -251,3 +251,38 @@ def test_logic_knows_its_block_and_names_it_shares() -> None:
     assert (by_id[0x300].block, by_id[0x300].section) == ("", "")
     assert by_id[0x101].name_shared and by_id[0x201].name_shared
     assert not any(by_id[ihc_id].name_shared for ihc_id in (0x102, 0x202, 0x300))
+
+
+def test_copies_of_a_block_know_what_they_drive() -> None:
+    """Copies of one block in a group are marked, and each knows the products its links lead to."""
+    from custom_components.lk_ihc.logic import parse_logic
+
+    logic = parse_logic(
+        """<utcs><groups><group name="Kitchen">
+          <product_dataline id="_0x10" name="Lamp outlet" position="ceiling spots">
+            <dataline_output id="_0x11" name="Light"/>
+            <link_to_resource id="_0x12" link="_0x105"/>
+          </product_dataline>
+          <functionblock id="_0x100" name="1.1.01. Toggle block">
+            <settings><resource_enum id="_0x101" name="Mode" typedef="_0x900"/></settings>
+            <outputs>
+              <resource_output id="_0x102" name="Output">
+                <link_from_resource id="_0x105" link="_0x12"/>
+              </resource_output>
+              <resource_output id="_0x103" name="On pulse"/>
+            </outputs>
+          </functionblock>
+          <functionblock id="_0x200" name="1.1.01. Toggle block">
+            <outputs><resource_output id="_0x202" name="Output"/></outputs>
+          </functionblock>
+          <functionblock id="_0x300" name="1.4.09. PIR controlled output">
+            <outputs><resource_output id="_0x302" name="Output"/></outputs>
+          </functionblock>
+        </group></groups></utcs>"""
+    )
+    by_id = {resource.ihc_id: resource for resource in logic.resources}
+    assert all(by_id[ihc_id].block_shared for ihc_id in (0x101, 0x102, 0x103, 0x202))
+    assert not by_id[0x302].block_shared
+    # The block drives the outlet, so its setting and its pulse, which lead nowhere, know it too.
+    assert {by_id[ihc_id].block_feeds for ihc_id in (0x101, 0x102, 0x103)} == {("Lamp outlet (ceiling spots)",)}
+    assert by_id[0x202].block_feeds == ()

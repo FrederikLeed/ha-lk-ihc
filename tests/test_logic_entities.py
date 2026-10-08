@@ -77,6 +77,41 @@ async def test_logic_is_named_by_room_and_shown_by_what_it_is(
     assert twin_setting.original_name == "Mode – Bryggers, Toggle block (attic)"
 
 
+async def test_copies_of_one_block_are_named_by_what_they_drive(
+    hass: HomeAssistant, config_entry: MockConfigEntry, fake_controller, monkeypatch
+):
+    """Two copies of a block under the catalogue's name are told apart by the products they feed."""
+    ar.async_get(hass).async_create("Bryggers", aliases={"Utility room"})
+    block = '<functionblock id="_0x2009" name="1.1.01. Toggle block with on, off and timer">'
+    own = '<outputs><resource_output id="_0x3024" name="Output"/></outputs>'
+    twin = (
+        '<functionblock id="_0x2011" name="1.1.01. Toggle block with on, off and timer">'
+        '<outputs><resource_output id="_0x3025" name="Output">'
+        '<link_from_resource id="_0x4005" link="_0x4006" name="Follow link"/>'
+        "</resource_output></outputs>"
+        "</functionblock>"
+    )
+    relay = '<airlink_relay id="_0x3007" name="Relay"/>'
+    fed = relay + '<link_to_resource id="_0x4006" link="_0x4005" name="Follow link"/>'
+    project = conftest.load_project()
+    assert block in project and relay in project
+    monkeypatch.setattr(
+        conftest, "load_project", lambda: project.replace(block, twin + block + own).replace(relay, fed)
+    )
+    assert await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    entities = er.async_get(hass)
+
+    def entry(ihc_id: int) -> er.RegistryEntry:
+        return entities.async_get(
+            entities.async_get_entity_id(Platform.BINARY_SENSOR, DOMAIN, f"{SERIAL}-logic-{ihc_id}")
+        )
+
+    assert entry(0x3024).original_name == "Output – Bryggers, Universal relay (in the attic)"
+    assert entry(0x3025).original_name == "Output – Bryggers, Universal relay (on the wall)"
+
+
 async def test_logic_the_project_no_longer_has_is_removed(
     hass: HomeAssistant, config_entry: MockConfigEntry, fake_controller
 ):

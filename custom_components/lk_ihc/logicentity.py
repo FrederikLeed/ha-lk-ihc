@@ -42,14 +42,18 @@ class IHCLogicEntity(Entity):
         settings and outputs - four "Dimmer status" in four rooms. The room is the area the group
         belongs in, which is only known once the entity is added. Where two blocks in one room
         share a name, the block tells them apart: whoever set it up usually named it after what it
-        drives ("PIR controlled output (front spot)").
+        drives ("PIR controlled output (front spot)"). Where the blocks are copies under the
+        catalogue's own name, so the block is shared too, what each copy drives tells them apart:
+        the products its links lead to ("Lamp outlet (ceiling spots)").
         """
         resource = self._resource
         name = resource.name or f"IHC {resource.kind} {resource.ihc_id}"
         where = []
         if resource.group:
             where.append(area_for_group(self.hass, resource.group) if self.hass else resource.group)
-        if resource.name_shared and resource.block:
+        if resource.name_shared and resource.block_shared and resource.block_feeds:
+            where.append(" / ".join(resource.block_feeds))
+        elif resource.name_shared and resource.block:
             where.append(resource.block)
         return f"{name} – {', '.join(where)}" if where else name
 
