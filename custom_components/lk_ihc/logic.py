@@ -28,6 +28,8 @@ from typing import Any
 
 from defusedxml import ElementTree
 
+from .project import _PRODUCT_TAGS, _describe
+
 
 def _int_id(value: str | None) -> int | None:
     """Return an IHC id as a number, written _0x1a2b3c in the project file."""
@@ -61,6 +63,11 @@ class LogicResource:
     # Another resource in the same group has the same name. An installation uses the same block in
     # several places, so this is common, and then only the block tells them apart.
     name_shared: bool = False
+    # Another block in the same group has the same name as this one - four copies of the catalogue's
+    # toggle block in one room - so not even the block tells them apart. What does is what each copy
+    # drives: the products its links lead to, named as a person would say them.
+    block_shared: bool = False
+    block_feeds: tuple[str, ...] = ()
 
 
 @dataclass(slots=True)
@@ -84,6 +91,29 @@ def _block_name(block: Any) -> str:
     name = _text(block.get("name"))
     number, _, rest = name.partition(". ")
     return (rest or number).strip()
+
+
+def _products_by_id(root: Any) -> dict[str, str]:
+    """Every id inside a product, mapped to the product as a person would name it.
+
+    A LED dimmer channel sits inside its RS485 module and is visited after it, so an id in a
+    channel ends up naming the channel, as it does in the project's wiring.
+    """
+    products: dict[str, str] = {}
+    for element in root.iter():
+        if element.tag in _PRODUCT_TAGS:
+            name = _describe(element)
+            for node in element.iter():
+                node_id = node.get("id")
+                if node_id:
+                    products[node_id] = name
+    return products
+
+
+def _block_feeds(block: Any, products: dict[str, str]) -> tuple[str, ...]:
+    """Return the products a function block's links lead to, in project order."""
+    fed = (products.get(_text(link.get("link"))) for link in block.iter("link_from_resource"))
+    return tuple(dict.fromkeys(name for name in fed if name))
 
 
 def _outside_programs(element: Any, block: Any = None, section: str = "") -> Iterator[tuple[Any, Any, str]]:
@@ -124,14 +154,19 @@ def parse_logic(xml: str | bytes) -> Logic:
         values = tuple(_text(value.get("name")) for value in definition if value.tag == "enum_value")
         enum_options[definition_id] = values
 
+    products = _products_by_id(root)
     logic = Logic()
     for group in root.iter("group"):
         group_name = _text(group.get("name"))
+        block_names = Counter(_block_name(block) for block in group.iter("functionblock"))
         for element, block, section in _outside_programs(group):
             ihc_id = _int_id(element.get("id"))
             if ihc_id is None:
                 continue
             where = {"group": group_name, "block": _block_name(block), "section": section}
+            if block is not None:
+                where["block_shared"] = block_names[_block_name(block)] > 1
+                where["block_feeds"] = _block_feeds(block, products)
             if element.tag == "resource_flag":
                 logic.flags.append(LogicResource(ihc_id=ihc_id, name=_text(element.get("name")), kind="flag", **where))
             elif element.tag == "resource_enum":
