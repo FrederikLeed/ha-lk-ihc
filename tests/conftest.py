@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -47,6 +48,8 @@ class FakeIHCController:
         self.url = url
         self.username = username
         self.password = password
+        # The real one reads a certificate file for an https address, so it must be built off the loop
+        self.built_in_thread = threading.get_ident()
         self.authenticated = False
         self.disconnected = False
         self.notifications: dict[int, Callable[[int, Any], None]] = {}

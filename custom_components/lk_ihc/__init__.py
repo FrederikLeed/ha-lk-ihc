@@ -61,7 +61,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: IHCConfigEntry) -> bool:
     """Connect to the controller, read the installation and create the entities."""
-    connection = IHCConnection(
+    connection = await IHCConnection.async_create(
         hass,
         entry.data[CONF_URL],
         entry.data[CONF_USERNAME],

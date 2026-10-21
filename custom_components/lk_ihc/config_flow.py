@@ -52,7 +52,7 @@ class LKIHCConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         placeholders: dict[str, str] = {}
         if user_input is not None:
-            connection = IHCConnection(
+            connection = await IHCConnection.async_create(
                 self.hass, user_input[CONF_URL], user_input[CONF_USERNAME], user_input[CONF_PASSWORD]
             )
             try:
@@ -101,7 +101,9 @@ class LKIHCConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             data = {**entry.data, **user_input}
-            connection = IHCConnection(self.hass, data[CONF_URL], data[CONF_USERNAME], data[CONF_PASSWORD])
+            connection = await IHCConnection.async_create(
+                self.hass, data[CONF_URL], data[CONF_USERNAME], data[CONF_PASSWORD]
+            )
             try:
                 await connection.async_connect()
             except IHCAuthError:

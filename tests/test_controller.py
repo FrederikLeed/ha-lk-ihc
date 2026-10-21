@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from unittest.mock import patch
 
 import pytest
@@ -22,11 +23,17 @@ pytestmark = pytest.mark.usefixtures("auto_enable_custom_integrations")
 
 
 @pytest.fixture
-def connection(hass: HomeAssistant, fake_controller):
+async def connection(hass: HomeAssistant, fake_controller):
     """A connection with the fake controller behind it, allowed to write."""
-    connection = IHCConnection(hass, "http://192.0.2.10", "tester", "secret")
+    connection = await IHCConnection.async_create(hass, "http://192.0.2.10", "tester", "secret")
     connection.read_only = False
     return connection
+
+
+async def test_controller_is_built_off_the_event_loop(hass: HomeAssistant, fake_controller):
+    """The sdk reads its certificate file for an https address, so it is built in an executor."""
+    await IHCConnection.async_create(hass, "https://192.0.2.10", "tester", "secret")
+    assert FakeIHCController.instances[-1].built_in_thread != threading.get_ident()
 
 
 async def test_connect_and_project(connection):

@@ -84,20 +84,36 @@ def last_transport_error(controller: Any) -> Exception | None:
         return None
 
 
+def create_controller(url: str, username: str, password: str) -> IHCController:
+    """Build the sdk's controller, with its HTTP timeout. Call it in an executor.
+
+    Nothing is sent to the controller here, but for an https address the sdk opens and reads its
+    certificate file and sets up an SSL context, which is blocking I/O the event loop must not do.
+    """
+    controller = IHCController(url, username, password)
+    apply_http_timeout(controller)
+    return controller
+
+
 class IHCConnection:
     """One connection to one IHC controller."""
 
-    def __init__(self, hass: HomeAssistant, url: str, username: str, password: str) -> None:
-        """Prepare a connection. Nothing is sent until async_connect."""
+    def __init__(self, hass: HomeAssistant, url: str, controller: IHCController) -> None:
+        """Wrap a controller built by create_controller. Use async_create from async code."""
         self.hass = hass
         self.url = url
-        self._controller = IHCController(url, username, password)
-        apply_http_timeout(self._controller)
+        self._controller = controller
         self._listeners: dict[int, list[ValueCallback]] = {}
         self._known_ids: set[int] = set()
         self._values: dict[int, Any] = {}
         self.info: dict[str, Any] = {}
         self.read_only = True
+
+    @classmethod
+    async def async_create(cls, hass: HomeAssistant, url: str, username: str, password: str) -> IHCConnection:
+        """Prepare a connection, building the sdk's controller in an executor. Nothing is sent yet."""
+        controller = await hass.async_add_executor_job(create_controller, url, username, password)
+        return cls(hass, url, controller)
 
     # --- connecting ---------------------------------------------------------
 

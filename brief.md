@@ -22,6 +22,12 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.9.2: HACS-reviewet (hacs/default#11261, frenck) fandt én blocker: `IHCController` blev bygget
+  på event-loopet, og for en `https://`-adresse læser ihcsdk sin certifikatfil og sætter en
+  SSL-kontekst op i konstruktøren — blokerende I/O ved hver opsætning, config flow og reauth.
+  Controlleren bygges nu i en executor (`IHCConnection.async_create`). Med i samme udgivelse: #6
+  (Jens Østergaard Nielsens navn rettet) og #7 (kopier af samme blok i ét rum navngives efter det,
+  de styrer) fra hedegaard1.
 - v0.9.1: hassfest begyndte 5/10 at afvise `==`-pins på pakker, HA selv afhænger af (`ihcsdk`,
   `defusedxml`): de skal være `>=`, så de kan følge med HA's egne versioner. Manifestet rettet, og
   `CONFIG_SCHEMA = config_entry_only_config_schema(DOMAIN)` tilføjet, som hassfest advarede om for

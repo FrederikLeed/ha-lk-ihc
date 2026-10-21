@@ -58,6 +58,10 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
   konkluderet, og intet produkt viser — alarmen tilkoblet), controllerens logik navngivet med rum og
   blok, enums delt i opsætning (deaktiveret) og tilstand (aktiv), Schneider Electric som producent,
   og pytest i CI. Det sidste hul fra hans første feature-liste er lukket.
+- **v0.9.2** — HACS-reviewet fandt, at controlleren blev bygget på event-loopet; med `https://`
+  læser ihcsdk en certifikatfil i konstruktøren, så den bygges nu i en executor. Desuden to PRs
+  fra hedegaard1: kopier af katalogets blok i samme rum navngives efter de produkter, de styrer
+  («Udgang for lys – Køkken, Lampeudtag (Spots i loft)»), og Jens Østergaard Nielsens navn er rettet.
 - **v0.8.2** — fundet ved den genstart, der satte v0.8.1 i drift: en login, der ikke nåede
   controlleren, blev meldt som forkert adgangskode, og HA holdt op med at prøve. ihcsdk sluger
   transportfejlen og returnerer False; kun `connection.last_exception` fortæller, hvad der skete.
