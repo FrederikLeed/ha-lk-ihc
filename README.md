@@ -6,7 +6,7 @@ En Home Assistant-integration til LK IHC-controllere, der sættes op fra brugerf
 produkt sin egen enhed og viser det, den indbyggede integration udelader: **tasterne på
 vægkontakterne**.
 
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://hacs.xyz/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <picture>
@@ -126,9 +126,12 @@ Det her taler med det system, der styrer lyset i et rigtigt hus, så:
 
 ### HACS
 
-1. HACS > menuen med tre prikker > **Brugerdefinerede repositories**.
-2. Tilføj `https://github.com/FrederikLeed/ha-lk-ihc` med kategorien **Integration**.
-3. Installér **LK IHC** og genstart Home Assistant.
+1. Åbn HACS og søg efter **LK IHC**.
+2. Installér den og genstart Home Assistant.
+
+Har du tilføjet repositoriet som brugerdefineret, før det kom på HACS' standardliste, kan du fjerne
+det igen under HACS > menuen med tre prikker > **Brugerdefinerede repositories**. Installationen
+bliver.
 
 ### Manuelt
 
@@ -331,8 +334,18 @@ firmware-nedbrydning og en API-vurdering), der har formet, hvad den gør og ikke
 ```bash
 python3.14 -m venv .venv
 .venv/bin/pip install -r requirements_test.txt ruff==0.16.7 ihcsdk==2.8.12 defusedxml==0.7.1
-.venv/bin/python -m pytest --cov=custom_components/lk_ihc --cov-report=term-missing
+.venv/bin/python -m pytest --cov=custom_components/lk_ihc --cov-report=term-missing tests compat
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
+```
+
+Testene i `tests/` kræver pytest-homeassistant-custom-component, som udkommer et stykke tid efter
+hver Home Assistant-version. Tjekkene i `compat/` kræver kun Home Assistant selv, og CI kører dem
+også på den nyeste version og beta hver uge, så et brud viser sig, før nogen opdaterer:
+
+```bash
+python3.14 -m venv .venv-newest
+.venv-newest/bin/pip install homeassistant pytest "ihcsdk>=2.8.12" "defusedxml>=0.7.1"
+.venv-newest/bin/python -m pytest compat
 ```
 
 Testene rører aldrig et netværk: sdk-controlleren er erstattet af en stand-in, og projektet kommer

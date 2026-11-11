@@ -22,6 +22,13 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- På HACS' standardliste siden 2026-11-04 (hacs/default#11261, godkendt af frenck). Hans ene
+  bemærkning — README'en skal føre med HACS-søgningen, ikke et brugerdefineret repository — er rettet.
+- CI efter v0.9.3: `compat/` har tjek, der kun kræver Home Assistant selv (alle moduler importerer,
+  og `device_info` bygges for hvert produkt i testprojektet). Jobbet «Newest Home Assistant» kører
+  dem på nyeste udgivelse og beta (beta må fejle), ved push og hver mandag, så et brud som 2026.11's
+  ses, før nogen opdaterer. Dependabot løfter testpakkens pin, når den udkommer til en ny version.
+  Den gamle `device_info`-linje fejler i `compat/` på 2026.11.1; den nye består.
 - v0.9.3: Home Assistant 2026.11 gjorde `DeviceInfo` til en dataclass (med dict-adgang for
   bagudkompatibilitet), men uden `|`. `IHCEntity.device_info` flettede `suggested_area` ind med
   `info | {...}`, så alle produkt-entiteter fejlede ved oprettelsen og stod som «unavailable» efter
@@ -195,7 +202,6 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Næste
 
-- HACS standardliste: indsendt 2026-09-24 som [hacs/default#11261](https://github.com/hacs/default/pull/11261). Køen tager måneder; tjek status i [backloggen](https://github.com/hacs/default/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+sort%3Acreated-asc). Bliver den sat til draft, er det en småting, der skal rettes, og så sættes den til "ready for review" igen.
 - Tiderne for langt tryk og dobbelttryk som indstillinger (i dag faste 0,8 s / 0,3 s).
 - Delte navne på logik: fald tilbage på det produkt, en bloks udgang driver, når også blokkens navn er delt.
 - `_0x2103`: kataloget siger "Dataline wall switch, 1 key", IHC Viewer siger "Button, 6 keys" — tjek mod kilden.

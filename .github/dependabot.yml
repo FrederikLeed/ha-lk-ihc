@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Picks up the test plugin for each new Home Assistant release, so the full suite follows it.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

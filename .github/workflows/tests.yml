@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "0 3 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -23,4 +25,31 @@ jobs:
         run: pip install -r requirements_test.txt
 
       - name: Run the tests
-        run: pytest --cov=custom_components/lk_ihc --cov-report=term-missing
+        run: pytest --cov=custom_components/lk_ihc --cov-report=term-missing tests compat
+
+  # The suite above runs on the Home Assistant its test plugin is pinned to, which comes out weeks
+  # after each release. This runs the checks that need no plugin on the newest release and beta,
+  # weekly as well, so a release that breaks the integration shows here before it is installed.
+  newest:
+    name: Newest Home Assistant (${{ matrix.channel }})
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.channel == 'beta' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, beta]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install the newest Home Assistant
+        run: pip install ${{ matrix.channel == 'beta' && '--pre' || '' }} homeassistant pytest "ihcsdk>=2.8.12" "defusedxml>=0.7.1"
+
+      - name: Show the version
+        run: python -c "from homeassistant.const import __version__; print(__version__)"
+
+      - name: Run the checks
+        run: pytest compat
