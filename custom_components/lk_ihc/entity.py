@@ -78,12 +78,13 @@ class IHCEntity(Entity):
         """The product's device, suggested into the area the installation already has for its group.
 
         Read when the entity is added, once Home Assistant and its areas are known - which they are
-        not when the entity is built.
+        not when the entity is built. Rebuilt rather than merged with `|`: DeviceInfo was a dict and
+        is a dataclass from Home Assistant 2026.11, and only unpacking works on both.
         """
         info = self._attr_device_info
         if info is None or self.hass is None or not self._product.group:
             return info
-        return info | {"suggested_area": area_for_group(self.hass, self._product.group)}
+        return DeviceInfo(**{**info, "suggested_area": area_for_group(self.hass, self._product.group)})
 
     async def async_added_to_hass(self) -> None:
         """Start listening for values from the controller."""

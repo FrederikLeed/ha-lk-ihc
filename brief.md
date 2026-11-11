@@ -22,6 +22,12 @@ et dansk produkt, og brugerne er det stort set alle. Kode, docstrings og commit-
 
 ## Nuværende tilstand
 
+- v0.9.3: Home Assistant 2026.11 gjorde `DeviceInfo` til en dataclass (med dict-adgang for
+  bagudkompatibilitet), men uden `|`. `IHCEntity.device_info` flettede `suggested_area` ind med
+  `info | {...}`, så alle produkt-entiteter fejlede ved oprettelsen og stod som «unavailable» efter
+  opdateringen til 2026.11.0. Bygges nu om med `DeviceInfo(**{**info, ...})`, som virker på begge.
+  Testpakken (pytest-homeassistant-custom-component) findes endnu ikke til 2026.11, så CI kører
+  stadig mod 2026.9 og fanger ikke den slags; rettelsen er tjekket direkte mod HA 2026.11.0's kode.
 - v0.9.2: HACS-reviewet (hacs/default#11261, frenck) fandt én blocker: `IHCController` blev bygget
   på event-loopet, og for en `https://`-adresse læser ihcsdk sin certifikatfil og sætter en
   SSL-kontekst op i konstruktøren — blokerende I/O ved hver opsætning, config flow og reauth.

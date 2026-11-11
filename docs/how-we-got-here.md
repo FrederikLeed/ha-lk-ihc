@@ -58,6 +58,9 @@ genbruger `ihcsdk` til SOAP-transporten og lægger en model ovenpå.
   konkluderet, og intet produkt viser — alarmen tilkoblet), controllerens logik navngivet med rum og
   blok, enums delt i opsætning (deaktiveret) og tilstand (aktiv), Schneider Electric som producent,
   og pytest i CI. Det sidste hul fra hans første feature-liste er lukket.
+- **v0.9.3** — HA 2026.11 gjorde `DeviceInfo` til en dataclass uden `|`, og alle produkt-entiteter
+  stod som «unavailable» i forfatterens eget hus efter opdateringen. Fanget af loggen, ikke af CI,
+  for testpakken til 2026.11 var ikke udkommet.
 - **v0.9.2** — HACS-reviewet fandt, at controlleren blev bygget på event-loopet; med `https://`
   læser ihcsdk en certifikatfil i konstruktøren, så den bygges nu i en executor. Desuden to PRs
   fra hedegaard1: kopier af katalogets blok i samme rum navngives efter de produkter, de styrer
